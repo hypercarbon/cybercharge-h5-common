@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cybercharge-h5-agent-deployment
+  labels:
+    app: cybercharge-h5-agent-app
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: cybercharge-h5-agent-app
+  template:
+    metadata:
+      labels:
+        app: cybercharge-h5-agent-app
+    spec:
+      containers:
+        - name: cybercharge-h5-agent-app
+          image: localhost:5000/cybercharge-h5-agent-app:latest
+          ports:
+            - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cybercharge-h5-agent-app-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: cybercharge-h5-agent-app
+  ports:
+    - port: 10080
+      targetPort: 80
+
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+  name: cybercharge-h5-agen-ingress
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: ccagent.cybercharge.cc
+      http:
+        paths:
+          - backend:
+              service:
+                name: cybercharge-h5-agent-app-service
+                port:
+                  number: 10080
+            path: /
+            pathType: ImplementationSpecific

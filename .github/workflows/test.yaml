@@ -1,0 +1,34 @@
+name: Deploy to Test Server
+
+on:
+  push:
+    branches:
+      - test
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup SSH agent
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.AWS_PEM_KEY }}
+
+      - name: Connect to EC2 and run commands
+        run: |
+          ssh -o StrictHostKeyChecking=no admin@47.130.75.121 << 'EOF'
+            # Your commands to run on the EC2 instance
+            sudo -i
+            cd /opt/wwwroot/cybercharge-h5-agent
+            git pull origin test
+            pnpm install
+            pnpm run build-only --mode test
+            docker build -t localhost:5000/cybercharge-h5-agent-app:latest .
+            docker push localhost:5000/cybercharge-h5-agent-app:latest
+            kubectl apply -f deploy/test/deployment.yaml
+            kubectl rollout restart deployment cybercharge-h5-agent-deployment
+          EOF

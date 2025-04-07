@@ -1,0 +1,14 @@
+:root:root {
+  --van-nav-bar-icon-color: #000;
+  --van-tab-active-text-color: #000;
+  --van-tab-text-color: #999;
+  --van-tabs-bottom-bar-color: #000;
+  --van-tabs-bottom-bar-width: 16px;
+  --van-picker-confirm-action-color: #000;
+  --van-button-primary-background: #9059ff;
+  --van-button-primary-border-color: #9059ff;
+}
+
+.van-tabs__line {
+  /* width: 16px ; */
+}
