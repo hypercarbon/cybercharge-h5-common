@@ -53,11 +53,26 @@ import {
   type UserInfo,
   type InviterInfo,
 } from '@/services/bindingInviter'
+import bg1 from './images/1/bg.png'
+import bg2 from './images/2/bg.png'
+import btn1 from './images/1/btn_large.png'
+import btn2 from './images/2/btn_large.png'
+
 const route = useRoute()
 const userInfoStore = useUserInfoStore()
 const desc = ref(
   'I am delighted to have you join my charging team. If you encounter any difficulties during the charging process, please feel free to contact me. I may be able to help find a solution or offer some advice.',
 )
+
+const backgroundImageMap: Record<string, string> = {
+  '1': bg1,
+  '2': bg2,
+}
+
+const btnImageMap: Record<string, string> = {
+  '1': btn1,
+  '2': btn2,
+}
 
 // 渠道相关
 const channel = ref('')
@@ -100,18 +115,18 @@ const handleBindInviter = async () => {
 const backgroundImage = computed(() => {
   let bgImage = ''
   if (channel.value) {
-    bgImage = `src/views/bindingInviter/images/${channel.value}/bg.png`
+    bgImage = backgroundImageMap[channel.value]
   } else {
-    bgImage = 'src/views/bindingInviter/images/1/bg.png'
+    bgImage = backgroundImageMap['1']
   }
   return bgImage
 })
 
 const bindButtonImage = computed(() => {
   if (channel.value) {
-    return `src/views/bindingInviter/images/${channel.value}/btn_large.png`
+    return btnImageMap[channel.value]
   } else {
-    return 'src/views/bindingInviter/images/1/btn_large.png'
+    return btnImageMap['1']
   }
 })
 

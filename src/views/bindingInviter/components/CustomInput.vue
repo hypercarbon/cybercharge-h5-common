@@ -39,6 +39,12 @@
 import { useI18n } from 'vue-i18n'
 import { showToast } from 'vant'
 import { computed } from 'vue'
+import icon1 from '../images/1/icon_game.png'
+import icon2 from '../images/2/icon_game.png'
+import bg1 from '../images/1/input_bg.png'
+import bg2 from '../images/2/input_bg.png'
+import btn1 from '../images/1/btn_small.png'
+import btn2 from '../images/2/btn_small.png'
 
 const { t } = useI18n()
 
@@ -65,26 +71,40 @@ const props = defineProps({
   },
 })
 
+const iconMap: Record<string, string> = {
+  '1': icon1,
+  '2': icon2,
+}
+
+const bgMap: Record<string, string> = {
+  '1': bg1,
+  '2': bg2,
+}
+
+const btnMap: Record<string, string> = {
+  '1': btn1,
+  '2': btn2,
+}
+
 const icon = computed(() => {
   if (props.channel) {
-    return `src/views/bindingInviter/images/${props.channel}/icon_game.png`
+    return iconMap[props.channel]
   }
-  return `src/views/bindingInviter/images/1/icon_game.png`
+  return icon1
 })
 
 const backgroundImage = computed(() => {
   if (props.channel) {
-    return `src/views/bindingInviter/images/${props.channel}/input_bg.png`
+    return bgMap[props.channel]
   }
-  return `src/views/bindingInviter/images/1/input_bg.png`
+  return bg1
 })
 
 const bindButtonImage = computed(() => {
   if (props.channel) {
-    return `src/views/bindingInviter/images/${props.channel}/btn_small.png`
-  } else {
-    return 'src/views/bindingInviter/images/1/btn_small.png'
+    return btnMap[props.channel]
   }
+  return btn1
 })
 
 const emit = defineEmits(['update:modelValue'])
