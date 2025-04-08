@@ -56,6 +56,6 @@ spec:
               service:
                 name: cybercharge-h5-common-app-service
                 port:
-                  number: 10080
+                  number: 10090
             path: /
             pathType: ImplementationSpecific
