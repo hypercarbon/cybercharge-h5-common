@@ -2,10 +2,10 @@
   <div class="invite-admin-page">
     <CustomNavBar class="invite-admin-page-navbar" />
     <div class="user-info">
-      <img class="avatar" :src="AvatarImg" alt="" />
-      <div class="info-wrapper">
+      <img class="avatar" :src="userInfo?.user.avatar || AvatarImg" alt="" />
+      <div class="info-wrapper" v-if="userInfo">
         <p class="username">{{ userInfo?.user.username }}</p>
-        <p class="user-id">ID: {{ userInfo?.user.id }}</p>
+        <p class="user-id">ID {{ userInfo?.user.id }}</p>
       </div>
     </div>
     <div class="game-tabs">
@@ -14,9 +14,9 @@
           'game-item',
           activeChannelTab === channel.channelId ? 'active' : null,
         ]"
-        v-for="(channel, gameTabIndex) in channelList"
+        v-for="channel in channelList"
         :key="channel.channelId"
-        @click="activeChannelTab = channel.channelId"
+        @click="handleClickChannel(channel.channelId)"
       >
         <img :src="channel.icon" alt="" />
         <span class="game-name">
@@ -80,7 +80,11 @@
                   v-for="user in levelItem.details"
                   :key="user.userId"
                 >
-                  <img class="avatar" :src="UserAvatar" alt="" />
+                  <img
+                    class="avatar"
+                    :src="user.user.avatar || UserAvatar"
+                    alt=""
+                  />
                   <div class="user-info-card">
                     <p class="name">{{ user.userId }}</p>
                     <p class="id">ID:{{ user.userId }}</p>
@@ -90,7 +94,9 @@
                       <img :src="GemImg" alt="" />
                       <span class="assets-num">{{ user.totalAmount }}</span>
                     </div>
-                    <p class="time">{{ formatTimestamp(user.time) }} 加入</p>
+                    <p class="time">
+                      {{ formatTimestamp(user.invitationTime) }} 加入
+                    </p>
                   </div>
                   <div class="total-info">
                     <div class="assets-info">
@@ -192,11 +198,16 @@ const levelTabs = computed(() => {
   return tabs
 })
 
+const handleClickChannel = (channelId: number) => {
+  activeChannelTab.value = channelId
+  _getRewardDetail()
+}
+
 onMounted(async () => {
   await _getUserInfo()
   console.log('userInfo', userInfo)
   await _getChannelList()
-  await _getRewardDetail(activeChannelTab.value)
+  await _getRewardDetail()
 })
 
 const _getUserInfo = async () => {
@@ -230,57 +241,12 @@ const _getChannelList = async () => {
   ]
 }
 
-const _getRewardDetail = async (channelId: number) => {
-  // const res = await getRewardDetail({
-  //   channelId: activeChannelTab.value,
-  //   userId: userInfo.value?.user.id,
-  // })
-  rewardDetail.value = {
-    userId: 10117,
-    totalAmount: 0e-10,
-    channelId: 1,
-    weekAmount: 0e-10,
-    oneLevels: [
-      {
-        totalAmount: 10000,
-        weekAmount: 999,
-        userId: 123121,
-        time: Date.now(),
-      },
-      {
-        totalAmount: 10000,
-        weekAmount: 999,
-        userId: 123122,
-        time: Date.now(),
-      },
-      {
-        totalAmount: 10000,
-        weekAmount: 999,
-        userId: 123123,
-        time: Date.now(),
-      },
-    ],
-    twoLevels: [
-      {
-        totalAmount: 10000,
-        weekAmount: 999,
-        userId: 123121,
-        time: Date.now(),
-      },
-      {
-        totalAmount: 10000,
-        weekAmount: 999,
-        userId: 123122,
-        time: Date.now(),
-      },
-      {
-        totalAmount: 10000,
-        weekAmount: 999,
-        userId: 123123,
-        time: Date.now(),
-      },
-    ],
-    otherLevels: { userId: 0, totalAmount: 0, weekAmount: 0 },
+const _getRewardDetail = async () => {
+  const res = await getRewardDetail({
+    channel_id: activeChannelTab.value.toString(),
+  })
+  if (res.code === 0) {
+    rewardDetail.value = res.data
   }
 
   console.log('res', res)
@@ -318,11 +284,12 @@ const _getRewardDetail = async (channelId: number) => {
       .user-id {
         color: rgba(255, 255, 255, 0.7);
         font-size: 12px;
-        font-weight: 400;
+        font-weight: 500;
       }
     }
   }
   .game-tabs {
+    min-height: 56px;
     flex-shrink: 0;
     display: flex;
     gap: 12px;

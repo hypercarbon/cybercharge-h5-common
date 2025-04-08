@@ -3,7 +3,7 @@ name: Deploy to Test Server
 on:
   push:
     branches:
-      - test
+      - main
 
 jobs:
   deploy:
@@ -23,12 +23,12 @@ jobs:
           ssh -o StrictHostKeyChecking=no admin@47.130.75.121 << 'EOF'
             # Your commands to run on the EC2 instance
             sudo -i
-            cd /opt/wwwroot/cybercharge-h5-agent
-            git pull origin test
+            cd /opt/wwwroot/cybercharge-h5-common
+            git pull origin main
             pnpm install
             pnpm run build-only --mode test
-            docker build -t localhost:5000/cybercharge-h5-agent-app:latest .
-            docker push localhost:5000/cybercharge-h5-agent-app:latest
+            docker build -t localhost:5000/cybercharge-h5-common-app:latest .
+            docker push localhost:5000/cybercharge-h5-common-app:latest
             kubectl apply -f deploy/test/deployment.yaml
-            kubectl rollout restart deployment cybercharge-h5-agent-deployment
+            kubectl rollout restart deployment cybercharge-h5-common-deployment
           EOF

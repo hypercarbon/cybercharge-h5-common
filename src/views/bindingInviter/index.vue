@@ -8,24 +8,29 @@
   >
     <CustomNavBar @back="handleBack" />
     <div class="binding-inviter-content">
-      <div class="info-content">
+      <div class="info-content" v-if="inviterInfo">
         <img src="./images/default-avatar.png" alt="avatar" />
-        <div class="user-name">{{ userName }}</div>
         <div class="desc">{{ desc }}</div>
       </div>
       <CustomInput
         v-model="inputCode"
         placeholder="Enter invite code"
-        :is-bind="isBind"
-        :type="channel"
+        :disabled="inviterInfo !== null || !userInfo"
+        :channel="channel"
         :show-clear-button="true"
+        :show-copy-button="inviterInfo !== null"
         background-color="rgba(0, 0, 0, 0.25)"
         @keyup.enter="handleBindInviter"
       />
 
       <button
+        v-if="!inviterInfo"
         class="bind-button"
-        :style="{ backgroundImage: `url(${bindButtonImage})` }"
+        :style="{
+          backgroundImage: `url(${bindButtonImage})`,
+          color: channel === '1' ? '#000' : '#fff',
+        }"
+        @click="handleBindInviter"
       >
         Bind Now
       </button>
@@ -41,18 +46,25 @@ import CustomInput from './components/CustomInput.vue'
 import { showToast } from 'vant'
 import nativeEvent from '@/utils/nativeEvent'
 import { useUserInfoStore } from '@/stores/userInfo'
+import {
+  bindChannelInviter,
+  getInviterInfo,
+  getUserInfo,
+  type UserInfo,
+  type InviterInfo,
+} from '@/services/bindingInviter'
 const route = useRoute()
 const userInfoStore = useUserInfoStore()
-const userName = ref('Taylor')
 const desc = ref(
   'I am delighted to have you join my charging team. If you encounter any difficulties during the charging process, please feel free to contact me. I may be able to help find a solution or offer some advice.',
 )
 
-// 是否绑定
-const isBind = ref(true)
 // 渠道相关
 const channel = ref('')
-
+const userInfo = ref<UserInfo>()
+const inviterInfo = ref<InviterInfo>(null)
+// 邀请码相关
+const inputCode = ref('')
 // 获取渠道参数
 const getChannelFromUrl = () => {
   // 优先从路由参数获取
@@ -68,7 +80,7 @@ const getChannelFromUrl = () => {
   if (urlChannel) {
     channel.value = urlChannel
   } else {
-    channel.value = '2'
+    channel.value = '1'
   }
 }
 
@@ -76,14 +88,12 @@ const handleBack = () => {
   nativeEvent.close()
 }
 
-// 邀请码相关
-const inputCode = ref('123123')
-
 const handleBindInviter = async () => {
   if (!inputCode.value) {
     showToast('请输入邀请码')
     return
   }
+  await _bindChannelInviter()
 }
 
 // 背景图片计算属性
@@ -105,10 +115,50 @@ const bindButtonImage = computed(() => {
   }
 })
 
-onMounted(() => {
+onMounted(async () => {
   getChannelFromUrl()
   console.log('当前渠道：', channel.value)
+  await _getUserInfo()
+  await _getInviterInfo()
 })
+
+const _getUserInfo = async () => {
+  const res = await getUserInfo()
+  if (res.code === 0) {
+    userInfo.value = res.data
+  }
+  console.log('res', res)
+}
+
+const _getInviterInfo = async () => {
+  const res = await getInviterInfo({
+    channelId: channel.value,
+    userId: userInfo.value?.user.id,
+  })
+  if (res.code === 0) {
+    inviterInfo.value = res.data
+    if (res.data) {
+      inputCode.value = res.data
+    }
+    console.log('inviterInfo', inviterInfo.value)
+  }
+}
+
+const _bindChannelInviter = async () => {
+  try {
+    const res = await bindChannelInviter({
+      channel_id: channel.value,
+      inviter_id: inputCode.value,
+    })
+    if (res.code === 0) {
+      showToast('绑定成功')
+      _getInviterInfo()
+    }
+  } catch (error) {
+    const errData = error.response.data
+    showToast(errData.msg)
+  }
+}
 </script>
 
 <style scoped>
@@ -137,15 +187,8 @@ onMounted(() => {
   border-radius: 50%;
 }
 
-.user-name {
-  margin-top: 12px;
-  font-size: 20px;
-  font-weight: 600;
-  color: #fff;
-}
-
 .desc {
-  margin-top: 12px;
+  margin-top: 14px;
   font-size: 12px;
   color: rgba(255, 255, 255, 0.6);
   line-height: 18px;

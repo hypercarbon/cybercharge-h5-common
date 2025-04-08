@@ -9,20 +9,23 @@
       @input="handleInput"
       :placeholder="placeholder"
       class="input-field"
-      :disabled="isBind"
+      :disabled="disabled"
     />
     <div class="right-buttons">
       <button
-        v-if="isBind"
+        v-if="showCopyButton"
         class="copy-button"
-        :style="{ backgroundImage: `url(${bindButtonImage})` }"
+        :style="{
+          backgroundImage: `url(${bindButtonImage})`,
+          color: channel === '1' ? '#000' : '#fff',
+        }"
         size="small"
         @click="handleCopy"
       >
         {{ t('Copy') }}
       </button>
       <van-icon
-        v-else-if="!isBind && modelValue"
+        v-if="!disabled && modelValue"
         color="#999"
         name="clear"
         class="clear-icon"
@@ -44,7 +47,7 @@ const props = defineProps({
     type: String,
     default: '',
   },
-  type: {
+  channel: {
     type: String,
     default: '1',
   },
@@ -56,29 +59,29 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  isBind: {
+  disabled: {
     type: Boolean,
     default: false,
   },
 })
 
 const icon = computed(() => {
-  if (props.type) {
-    return `src/views/bindingInviter/images/${props.type}/icon_game.png`
+  if (props.channel) {
+    return `src/views/bindingInviter/images/${props.channel}/icon_game.png`
   }
   return `src/views/bindingInviter/images/1/icon_game.png`
 })
 
 const backgroundImage = computed(() => {
-  if (props.type) {
-    return `src/views/bindingInviter/images/${props.type}/input_bg.png`
+  if (props.channel) {
+    return `src/views/bindingInviter/images/${props.channel}/input_bg.png`
   }
   return `src/views/bindingInviter/images/1/input_bg.png`
 })
 
 const bindButtonImage = computed(() => {
-  if (props.type) {
-    return `src/views/bindingInviter/images/${props.type}/btn_small.png`
+  if (props.channel) {
+    return `src/views/bindingInviter/images/${props.channel}/btn_small.png`
   } else {
     return 'src/views/bindingInviter/images/1/btn_small.png'
   }
@@ -93,14 +96,50 @@ const handleInput = (event: Event) => {
   }
 }
 
-const handleCopy = async () => {
+const copyToClipboard = async (text: string) => {
   try {
-    // 安卓不支持，需实现原生方法
-    await navigator.clipboard.writeText(props.modelValue)
-    showToast(t('Copied successfully'))
+    // 尝试使用现代 API
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text)
+      return true
+    } else {
+      // 降级方案：使用 document.execCommand
+      const textArea = document.createElement('textarea')
+      textArea.value = text
+
+      // 避免滚动到视图中
+      textArea.style.top = '0'
+      textArea.style.left = '0'
+      textArea.style.position = 'fixed'
+      textArea.style.opacity = '0'
+
+      document.body.appendChild(textArea)
+      textArea.focus()
+      textArea.select()
+
+      try {
+        const successful = document.execCommand('copy')
+        document.body.removeChild(textArea)
+        return successful
+      } catch (err) {
+        document.body.removeChild(textArea)
+        return false
+      }
+    }
   } catch (err) {
-    console.log('err', err)
-    showToast(t('Copy failed'))
+    console.error('复制失败:', err)
+    return false
+  }
+}
+
+const handleCopy = async () => {
+  if (!props.modelValue) return
+
+  const success = await copyToClipboard(props.modelValue)
+  if (success) {
+    showToast(t('Copied successfully'))
+  } else {
+    showToast(t('Copy failed, please manually copy'))
   }
 }
 </script>

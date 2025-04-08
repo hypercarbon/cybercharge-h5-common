@@ -3,8 +3,8 @@ import type { Result } from '@/types/utils'
 import axiosInstance from '@/utils/axiosInstance'
 
 type BindChannelInviterParams = {
-  inviter_id: 'string'
-  channel_id: 'string'
+  inviter_id: string
+  channel_id: string
 }
 
 type CommonParams = {
@@ -12,7 +12,7 @@ type CommonParams = {
   channelId: string
 }
 
-type InviterInfo = {}
+export type InviterInfo = null | string
 
 export type Channel = {
   channelCode: string
@@ -26,20 +26,24 @@ export type RewardDetail = {
   channelId: number
   totalAmount: number
   weekAmount: number
-  oneLevels: {
-    totalAmount: number
-    userId: number
-    weekAmount: number
-  }[]
-  twoLevels: {
-    totalAmount: number
-    userId: number
-    weekAmount: number
-  }[]
+  oneLevels: LevelUser[]
+  twoLevels: LevelUser[]
   otherLevels: {
     userId: 0
     totalAmount: 0
     weekAmount: 0
+  }
+}
+
+export type LevelUser = {
+  totalAmount: number
+  userId: number
+  weekAmount: number
+  invitationTime: number
+  user: {
+    id: number
+    username: string
+    avatar: string
   }
 }
 
@@ -57,6 +61,23 @@ export const getUserInfo = (): Promise<Result<UserInfo>> =>
   axiosInstance.get('/api/user')
 
 /**
+ * 获取邀请人奖励详情
+ * @param params
+ * @returns
+ */
+export const getRewardDetail = (params: {
+  channel_id: string
+}): Promise<Result<RewardDetail>> =>
+  axiosInstance.post('/api/user/inviter/getRewardList', params)
+
+/**
+ * 获取渠道列表
+ * @returns
+ */
+export const getChannelList = (): Promise<Result<Channel[]>> =>
+  axiosInstance.get(DEV_URL + '/gateway/invite-service/api/v1/channel/list')
+
+/**
  * 获取邀请人信息
  * @param params
  * @returns
@@ -67,25 +88,6 @@ export const getInviterInfo = (
   axiosInstance.get(DEV_URL + '/gateway/invite-service/api/v1/invite/get', {
     params,
   })
-
-/**
- * 获取邀请人奖励详情
- * @param params
- * @returns
- */
-export const getRewardDetail = (
-  params: CommonParams,
-): Promise<Result<RewardDetail>> =>
-  axiosInstance.get(DEV_URL + '/gateway/invite-service/api/v1/reward/get', {
-    params,
-  })
-
-/**
- * 获取渠道列表
- * @returns
- */
-export const getChannelList = (): Promise<Result<Channel[]>> =>
-  axiosInstance.get(DEV_URL + '/gateway/invite-service/api/v1/channel/list')
 
 /**
  * 绑定渠道邀请人

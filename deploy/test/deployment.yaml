@@ -1,9 +1,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: cybercharge-h5-agent-deployment
+  name: cybercharge-h5-common-deployment
   labels:
-    app: cybercharge-h5-agent-app
+    app: cybercharge-h5-common-app
 spec:
   replicas: 1
   strategy:
@@ -13,15 +13,15 @@ spec:
       maxSurge: 1
   selector:
     matchLabels:
-      app: cybercharge-h5-agent-app
+      app: cybercharge-h5-common-app
   template:
     metadata:
       labels:
-        app: cybercharge-h5-agent-app
+        app: cybercharge-h5-common-app
     spec:
       containers:
-        - name: cybercharge-h5-agent-app
-          image: localhost:5000/cybercharge-h5-agent-app:latest
+        - name: cybercharge-h5-common-app
+          image: localhost:5000/cybercharge-h5-common-app:latest
           ports:
             - containerPort: 80
 
@@ -29,17 +29,15 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: cybercharge-h5-agent-app-service
+  name: cybercharge-h5-common-app-service
 spec:
   type: LoadBalancer
   selector:
-    app: cybercharge-h5-agent-app
+    app: cybercharge-h5-common-app
   ports:
-    - port: 10080
+    - port: 10090
       targetPort: 80
-
-
----
+# ---
 
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -51,12 +49,12 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: ccagent.cybercharge.cc
+    - host: invite.cybercharge.cc
       http:
         paths:
           - backend:
               service:
-                name: cybercharge-h5-agent-app-service
+                name: cybercharge-h5-common-app-service
                 port:
                   number: 10080
             path: /
