@@ -45,6 +45,7 @@ export const useUserInfoStore = defineStore('userInfo', () => {
     localStorage.setItem(ACTIVE_INFO, decodeURI(activeInfo))
     sessionStorage.setItem(SAFE_TOP, safeTop)
     setSafeTop(Number(safeTop))
+    // 获取用户信息
     // console.log('--------- activeInfo ---------')
     // console.log(activeInfo)
     // console.log('---------decode activeInfo ---------')
