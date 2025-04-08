@@ -33,7 +33,7 @@ const router = createRouter({
       // component: Start,
     },
     {
-      path: '/',
+      path: '/bindingInviter',
       name: 'bindingInviter',
       component: () => import('../views/bindingInviter/index.vue'),
     },
