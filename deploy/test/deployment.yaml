@@ -31,7 +31,7 @@ kind: Service
 metadata:
   name: cybercharge-h5-common-app-service
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   selector:
     app: cybercharge-h5-common-app
   ports:
