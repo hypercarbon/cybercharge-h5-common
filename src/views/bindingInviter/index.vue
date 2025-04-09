@@ -181,6 +181,7 @@ const _bindChannelInviter = async () => {
   height: 100vh;
   background-size: 100% 100%;
   background-repeat: no-repeat;
+  background-color: rgba(0, 0, 0, 0.95);
 }
 
 .binding-inviter-content {
