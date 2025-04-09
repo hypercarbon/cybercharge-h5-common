@@ -45,13 +45,16 @@ export const useUserInfoStore = defineStore('userInfo', () => {
     localStorage.setItem(USER_TOKEN, token)
     localStorage.setItem(APP_LANGUAGE, language)
     localStorage.setItem(ACTIVE_INFO, decodeURI(activeInfo))
+
     if (StatusBarHeight) {
-      sessionStorage.setItem(SAFE_TOP, StatusBarHeight)
+      setSafeTop(Number(StatusBarHeight))
+      // sessionStorage.setItem(SAFE_TOP, StatusBarHeight)
     }
     if (safeTop) {
-      sessionStorage.setItem(SAFE_TOP, safeTop)
+      setSafeTop(Number(safeTop))
+
+      // sessionStorage.setItem(SAFE_TOP, safeTop)
     }
-    setSafeTop(Number(safeTop))
     // console.log('--------- activeInfo ---------')
     // console.log(activeInfo)
     // console.log('---------decode activeInfo ---------')
