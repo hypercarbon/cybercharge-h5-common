@@ -3,12 +3,15 @@
     <div class="customNavBarBackBtn" @click="handleBack">
       <BackIcon class="backIcon" />
     </div>
-    <span class="title">My Inviter or My referrer</span>
+    <span class="title">{{ t('bindingInviter.MyInviter') }}</span>
   </div>
 </template>
 
 <script setup lang="ts">
 import BackIcon from '../Icon/icon_back.vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const emit = defineEmits<{
   (e: 'back'): void

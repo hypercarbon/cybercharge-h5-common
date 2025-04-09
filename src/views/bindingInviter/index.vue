@@ -14,7 +14,7 @@
       </div>
       <CustomInput
         v-model="inputCode"
-        placeholder="Enter invite code"
+        :placeholder="t('bindingInviter.Placeholder')"
         :disabled="inviterInfo !== null || !userInfo"
         :channel="channel"
         :show-clear-button="true"
@@ -32,7 +32,7 @@
         }"
         @click="handleBindInviter"
       >
-        Bind Now
+        {{ t('bindingInviter.BindNow') }}
       </button>
     </div>
   </div>
@@ -57,12 +57,13 @@ import bg1 from './images/1/bg.png'
 import bg2 from './images/2/bg.png'
 import btn1 from './images/1/btn_large.png'
 import btn2 from './images/2/btn_large.png'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const route = useRoute()
 const userInfoStore = useUserInfoStore()
-const desc = ref(
-  'I am delighted to have you join my charging team. If you encounter any difficulties during the charging process, please feel free to contact me. I may be able to help find a solution or offer some advice.',
-)
+const desc = ref(t('bindingInviter.Welcome'))
 
 const backgroundImageMap: Record<string, string> = {
   '1': bg1,

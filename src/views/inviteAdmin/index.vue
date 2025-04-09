@@ -52,8 +52,12 @@
                 <span class="assets-value">GEM</span>
               </div>
               <div class="assets-th assets-row">
-                <span class="assets-col">Total Gem Earnings</span>
-                <span class="assets-col">Week Gem Earnings</span>
+                <span class="assets-col">{{
+                  t('inviteAdmin.TotalEarnings')
+                }}</span>
+                <span class="assets-col">{{
+                  t('inviteAdmin.WeeklyEarnings')
+                }}</span>
               </div>
               <div class="assets-tb assets-row">
                 <span class="assets-col">{{
@@ -95,12 +99,15 @@
                     <p class="id">ID:{{ user.userId }}</p>
 
                     <div class="assets-row">
-                      <span class="assets-label">Monthly Contribution: </span>
+                      <span class="assets-label">{{
+                        t('inviteAdmin.WeeklyContribution')
+                      }}</span>
                       <img :src="GemImg" alt="" />
                       <span class="assets-num">{{ user.totalAmount }}</span>
                     </div>
                     <p class="time">
-                      {{ formatTimestamp(user.invitationTime) }} 加入
+                      {{ formatTimestamp(user.invitationTime) }}
+                      {{ t('inviteAdmin.Joined') }}
                     </p>
                   </div>
                   <div class="total-info">
@@ -110,21 +117,29 @@
                         user.weekAmount
                       }}</span>
                     </div>
-                    <span class="info-text">Contribution</span>
+                    <span class="info-text">{{
+                      t('inviteAdmin.TotalContribution')
+                    }}</span>
                   </div>
                 </li>
-                <li class="bottom-line">It's already my bottom line~</li>
+                <li class="bottom-line">
+                  {{ t('inviteAdmin.BottomLineText') }}
+                </li>
               </ul>
               <div class="other-level-info" v-else>
                 <div class="other-level-info-item">
-                  <span class="label">Total Contribution</span>
+                  <span class="label">{{
+                    t('inviteAdmin.TotalContribution')
+                  }}</span>
                   <div class="value">
                     <img :src="GemImg" alt="" />
                     <span>{{ levelItem.details.totalAmount }}</span>
                   </div>
                 </div>
                 <div class="other-level-info-item">
-                  <span class="label">Week Contribution</span>
+                  <span class="label">{{
+                    t('inviteAdmin.WeeklyContribution')
+                  }}</span>
                   <div class="value">
                     <img :src="GemImg" alt="" />
                     <span>{{ levelItem.details.weekAmount }}</span>
@@ -156,6 +171,9 @@ import {
 } from '@/services/bindingInviter'
 import { useUserInfoStore } from '@/stores/userInfo'
 const userInfoStore = useUserInfoStore()
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const activeChannelTab = ref(0)
 const activeAsstesTab = ref(0)
@@ -178,7 +196,7 @@ const levelTabs = computed(() => {
   if (rewardDetail.value?.oneLevels) {
     tabs.push({
       id: 1,
-      name: 'Level 1',
+      name: t('inviteAdmin.Direct'),
       num: rewardDetail.value?.oneLevels.length,
       details: rewardDetail.value?.oneLevels,
     })
@@ -186,7 +204,7 @@ const levelTabs = computed(() => {
   if (rewardDetail.value?.twoLevels) {
     tabs.push({
       id: 2,
-      name: 'Level 2',
+      name: t('inviteAdmin.Indirect'),
       num: rewardDetail.value?.twoLevels.length,
       details: rewardDetail.value?.twoLevels,
     })
@@ -194,7 +212,7 @@ const levelTabs = computed(() => {
   if (rewardDetail.value?.otherLevels) {
     tabs.push({
       id: 3,
-      name: 'Others',
+      name: t('inviteAdmin.More'),
       num: 0,
       details: rewardDetail.value?.otherLevels,
     })

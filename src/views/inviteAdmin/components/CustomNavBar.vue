@@ -3,12 +3,15 @@
     <div class="customNavBarBackBtn">
       <BackIcon class="backIcon" />
     </div>
-    <span class="title">My Invitations</span>
+    <span class="title">{{ t('inviteAdmin.Myinvitation') }}</span>
   </div>
 </template>
 
 <script setup lang="ts">
 import BackIcon from '../Icon/icon_back.vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 </script>
 
 <style scoped>

@@ -22,7 +22,7 @@
         size="small"
         @click="handleCopy"
       >
-        {{ t('Copy') }}
+        {{ t('bindingInviter.Copy') }}
       </button>
       <van-icon
         v-if="!disabled && modelValue"
@@ -157,9 +157,9 @@ const handleCopy = async () => {
 
   const success = await copyToClipboard(props.modelValue)
   if (success) {
-    showToast(t('Copied successfully'))
+    showToast(t('bindingInviter.CopySuccess'))
   } else {
-    showToast(t('Copy failed, please manually copy'))
+    showToast(t('bindingInviter.CopyFailed'))
   }
 }
 </script>
