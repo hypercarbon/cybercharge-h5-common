@@ -12,7 +12,8 @@ export interface RouterQuery {
   language: string
   token: string
   activeInfo: string
-  safeTop: string
+  safeTop?: string
+  StatusBarHeight?: string
 }
 
 export const useUserInfoStore = defineStore('userInfo', () => {
@@ -38,12 +39,18 @@ export const useUserInfoStore = defineStore('userInfo', () => {
   })
 
   function setRouterQuery(routerQueryVal: RouterQuery) {
-    const { language, token, activeInfo, safeTop } = routerQueryVal
+    const { language, token, activeInfo, safeTop, StatusBarHeight } =
+      routerQueryVal
     routerQuery.value = routerQueryVal
     localStorage.setItem(USER_TOKEN, token)
     localStorage.setItem(APP_LANGUAGE, language)
     localStorage.setItem(ACTIVE_INFO, decodeURI(activeInfo))
-    sessionStorage.setItem(SAFE_TOP, safeTop)
+    if (StatusBarHeight) {
+      sessionStorage.setItem(SAFE_TOP, StatusBarHeight)
+    }
+    if (safeTop) {
+      sessionStorage.setItem(SAFE_TOP, safeTop)
+    }
     setSafeTop(Number(safeTop))
     // console.log('--------- activeInfo ---------')
     // console.log(activeInfo)
