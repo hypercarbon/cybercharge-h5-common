@@ -83,7 +83,7 @@ const inputCode = ref('')
 // 获取渠道参数
 const getChannelFromUrl = () => {
   // 优先从路由参数获取
-  const routeChannel = route.query.channel as string
+  const routeChannel = route.query.channelId as string
   if (routeChannel) {
     channel.value = routeChannel
     return
@@ -91,7 +91,7 @@ const getChannelFromUrl = () => {
 
   // 从URL参数获取
   const urlParams = new URLSearchParams(window.location.search)
-  const urlChannel = urlParams.get('channel')
+  const urlChannel = urlParams.get('channelId')
   if (urlChannel) {
     channel.value = urlChannel
   } else {
