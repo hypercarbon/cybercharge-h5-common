@@ -1,5 +1,10 @@
 <template>
-  <div class="invite-admin-page">
+  <div
+    class="invite-admin-page"
+    :style="{
+      paddingTop: userInfoStore.safeTop + 'px',
+    }"
+  >
     <CustomNavBar class="invite-admin-page-navbar" />
     <div class="user-info">
       <img class="avatar" :src="userInfo?.user.avatar || AvatarImg" alt="" />
@@ -149,6 +154,8 @@ import {
   getRewardDetail,
   type RewardDetail,
 } from '@/services/bindingInviter'
+import { useUserInfoStore } from '@/stores/userInfo'
+const userInfoStore = useUserInfoStore()
 
 const activeChannelTab = ref(0)
 const activeAsstesTab = ref(0)
@@ -257,7 +264,7 @@ const _getRewardDetail = async () => {
 .invite-admin-page {
   height: 100vh;
   background: url('./images/bg.png');
-  background-size: contain;
+  background-size: cover;
   display: flex;
   flex-direction: column;
   .invite-admin-page-navbar {
