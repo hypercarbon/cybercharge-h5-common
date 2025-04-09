@@ -1,6 +1,6 @@
 <template>
   <div :class="['customNavBar']">
-    <div class="customNavBarBackBtn">
+    <div class="customNavBarBackBtn" @click="handleBack">
       <BackIcon class="backIcon" />
     </div>
     <span class="title">{{ t('inviteAdmin.Myinvitation') }}</span>
@@ -12,6 +12,14 @@ import BackIcon from '../Icon/icon_back.vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
+
+const emit = defineEmits<{
+  (e: 'back'): void
+}>()
+
+const handleBack = () => {
+  emit('back')
+}
 </script>
 
 <style scoped>
