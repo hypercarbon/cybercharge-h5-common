@@ -47,7 +47,7 @@ export const useUserInfoStore = defineStore('userInfo', () => {
     localStorage.setItem(ACTIVE_INFO, decodeURI(activeInfo))
 
     if (StatusBarHeight) {
-      setSafeTop(Number(StatusBarHeight))
+      setSafeTop(getActualPixels(Number(StatusBarHeight)))
       // sessionStorage.setItem(SAFE_TOP, StatusBarHeight)
     }
     if (safeTop) {
@@ -59,6 +59,11 @@ export const useUserInfoStore = defineStore('userInfo', () => {
     // console.log(activeInfo)
     // console.log('---------decode activeInfo ---------')
     // console.log(decodeURI(activeInfo))
+  }
+
+  function getActualPixels(value: number) {
+    const dpr = window.devicePixelRatio || 1
+    return value / dpr
   }
 
   function setAgentUser(agentUserVal: AgentUserInfo) {
