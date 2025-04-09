@@ -44,7 +44,7 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/use-regex: 'true'
     nginx.ingress.kubernetes.io/ssl-redirect: 'false'
-  name: cybercharge-h5-agen-ingress
+  name: cybercharge-h5-common-ingress
 spec:
   ingressClassName: nginx
   rules:
