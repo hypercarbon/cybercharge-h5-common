@@ -250,20 +250,20 @@ const _getChannelList = async () => {
     activeChannelTab.value = res.data[0].channelId
   }
 
-  channelList.value = [
-    {
-      channelId: 1,
-      channelCode: 'CH001',
-      channelName: '官方渠道',
-      icon: 'https://cybercharge-admin.s3.ap-southeast-1.amazonaws.com/distribution/20250403-162653.png',
-    },
-    {
-      channelId: 2,
-      channelCode: 'CH002',
-      channelName: 'TG渠道',
-      icon: 'https://cybercharge-admin.s3.ap-southeast-1.amazonaws.com/distribution/20250403-162725.png',
-    },
-  ]
+  // channelList.value = [
+  //   {
+  //     channelId: 1,
+  //     channelCode: 'CH001',
+  //     channelName: '官方渠道',
+  //     icon: 'https://cybercharge-admin.s3.ap-southeast-1.amazonaws.com/distribution/20250403-162653.png',
+  //   },
+  //   {
+  //     channelId: 2,
+  //     channelCode: 'CH002',
+  //     channelName: 'TG渠道',
+  //     icon: 'https://cybercharge-admin.s3.ap-southeast-1.amazonaws.com/distribution/20250403-162725.png',
+  //   },
+  // ]
 }
 
 const _getRewardDetail = async () => {
