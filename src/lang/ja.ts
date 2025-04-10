@@ -168,5 +168,7 @@ export default {
     Welcome: '私のチームにようこそ！',
     BindNow: '今すぐバインド',
     Placeholder: '招待コードを入力してください',
+    PleaseEnterInviteCode: '招待コードを入力してください',
+    PleaseEnterCorrectUserId: '招待コードが正しいか確認してください',
   },
 }

@@ -106,9 +106,17 @@ const handleBack = () => {
 
 const handleBindInviter = async () => {
   if (!inputCode.value) {
-    showToast('请输入邀请码')
+    showToast(t('bindingInviter.PleaseEnterInviteCode'))
     return
   }
+
+  // 验证是否为6位数字
+  const reg = /^\d{6}$/
+  if (!reg.test(inputCode.value)) {
+    showToast(t('bindingInviter.PleaseEnterCorrectUserId'))
+    return
+  }
+
   await _bindChannelInviter()
 }
 

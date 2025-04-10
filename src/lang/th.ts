@@ -168,5 +168,7 @@ export default {
     Welcome: 'ยินดีต้อนรับเข้าสู่ทีมของฉันนะคะ',
     BindNow: 'ดำเนินการตอนนี้',
     Placeholder: 'ป้อนรหัสเชิญ',
+    PleaseEnterInviteCode: 'ป้อนรหัสเชิญ',
+    PleaseEnterCorrectUserId: 'ป้อนรหัสเชิญที่ถูกต้อง',
   },
 }

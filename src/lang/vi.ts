@@ -167,5 +167,7 @@ export default {
     Welcome: 'Chào mừng bạn đến với đội của tôi!',
     BindNow: 'Đã kết nối',
     Placeholder: 'Nhập mã mời',
+    PleaseEnterInviteCode: 'Nhập mã mời',
+    PleaseEnterCorrectUserId: 'Nhập mã mời đúng',
   },
 }

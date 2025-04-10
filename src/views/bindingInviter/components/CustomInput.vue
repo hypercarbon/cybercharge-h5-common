@@ -112,7 +112,11 @@ const emit = defineEmits(['update:modelValue'])
 const handleInput = (event: Event) => {
   const target = event.target as HTMLInputElement
   if (target) {
-    emit('update:modelValue', target.value)
+    // 只允许输入数字
+    const value = target.value.replace(/[^\d]/g, '')
+    // 限制最大长度为6
+    const limitedValue = value.slice(0, 6)
+    emit('update:modelValue', limitedValue)
   }
 }
 

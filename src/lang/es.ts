@@ -168,5 +168,7 @@ export default {
     Welcome: '¡Bienvenido/a a mi equipo!',
     BindNow: 'Hacerlo ahora',
     Placeholder: 'Introduce código',
+    PleaseEnterInviteCode: 'Introduce código',
+    PleaseEnterCorrectUserId: 'Introduce código correcto',
   },
 }

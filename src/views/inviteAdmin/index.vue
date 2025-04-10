@@ -72,7 +72,6 @@
           <van-tabs
             class="level-tabs-container"
             v-model:active="activeInviteTab"
-            swipeable
           >
             <van-tab
               v-for="(levelItem, index) in levelTabs"
@@ -254,21 +253,6 @@ const _getChannelList = async () => {
     channelList.value = res.data
     activeChannelTab.value = res.data[0].channelId
   }
-
-  // channelList.value = [
-  //   {
-  //     channelId: 1,
-  //     channelCode: 'CH001',
-  //     channelName: '官方渠道',
-  //     icon: 'https://cybercharge-admin.s3.ap-southeast-1.amazonaws.com/distribution/20250403-162653.png',
-  //   },
-  //   {
-  //     channelId: 2,
-  //     channelCode: 'CH002',
-  //     channelName: 'TG渠道',
-  //     icon: 'https://cybercharge-admin.s3.ap-southeast-1.amazonaws.com/distribution/20250403-162725.png',
-  //   },
-  // ]
 }
 
 const _getRewardDetail = async () => {
@@ -417,7 +401,7 @@ const _getRewardDetail = async () => {
       .info-card {
         position: relative;
         width: 100%;
-        padding-top: 38.84%; /* 设置卡片的高度，比例是16:9，56.25% = 9/16 */
+        height: 134px;
         &:before {
           content: '';
           position: absolute;
@@ -498,7 +482,7 @@ const _getRewardDetail = async () => {
             &::after {
               position: absolute;
               bottom: 0;
-              right: -20px;
+              /* right: -20px; */
               content: '';
               height: 1px;
               width: 100%;

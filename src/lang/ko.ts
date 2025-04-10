@@ -167,5 +167,7 @@ export default {
     Welcome: '저의 팀에 오신 것을 환영합니다!',
     BindNow: '지금 바인드',
     Placeholder: '초대 코드 입력',
+    PleaseEnterInviteCode: '초대 코드 입력',
+    PleaseEnterCorrectUserId: '초대 코드가 올바른지 확인해주세요',
   },
 }

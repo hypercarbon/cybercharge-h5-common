@@ -168,5 +168,7 @@ export default {
     Welcome: 'Welcome to my team!',
     BindNow: 'Bind Now',
     Placeholder: 'Enter invite code',
+    PleaseEnterInviteCode: 'Please enter invite code',
+    PleaseEnterCorrectUserId: 'Please enter correct user ID',
   },
 }

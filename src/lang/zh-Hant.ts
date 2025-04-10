@@ -166,5 +166,7 @@ export default {
     Welcome: '歡迎加入我的團隊。',
     BindNow: '立即綁定',
     Placeholder: '輸入邀請碼',
+    PleaseEnterInviteCode: '請輸入邀請碼',
+    PleaseEnterCorrectUserId: '請輸入正確的邀請碼',
   },
 }

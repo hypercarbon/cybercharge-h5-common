@@ -169,5 +169,7 @@ export default {
     Welcome: 'Добро пожаловать в мою команду!',
     BindNow: 'Выполнить сейчас',
     Placeholder: 'Введите пригласительный код',
+    PleaseEnterInviteCode: 'Введите пригласительный код',
+    PleaseEnterCorrectUserId: 'Введите правильный пригласительный код',
   },
 }

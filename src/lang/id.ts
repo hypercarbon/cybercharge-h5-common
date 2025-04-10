@@ -167,5 +167,7 @@ export default {
     Welcome: 'Selamat datang di tim saya!',
     BindNow: 'Hubungkan sekarang',
     Placeholder: 'Masukkan kode undangan',
+    PleaseEnterInviteCode: 'Masukkan kode undangan',
+    PleaseEnterCorrectUserId: 'Masukkan kode undangan yang benar',
   },
 }
