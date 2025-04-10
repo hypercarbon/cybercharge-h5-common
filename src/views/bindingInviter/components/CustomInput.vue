@@ -13,6 +13,7 @@
         :disabled="disabled"
       />
       <button
+        v-if="showCopyButton"
         class="copy-button"
         :style="{
           backgroundImage: `url(${bindButtonImage})`,
