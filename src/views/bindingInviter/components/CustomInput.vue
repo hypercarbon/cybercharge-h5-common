@@ -4,16 +4,15 @@
     :style="{ backgroundImage: `url(${backgroundImage})` }"
   >
     <img :src="icon" class="left-icon" alt="" />
-    <input
-      :value="modelValue"
-      @input="handleInput"
-      :placeholder="placeholder"
-      class="input-field"
-      :disabled="disabled"
-    />
-    <div class="right-buttons">
+    <div class="input-wrapper">
+      <input
+        :value="modelValue"
+        @input="handleInput"
+        :placeholder="placeholder"
+        class="input-field"
+        :disabled="disabled"
+      />
       <button
-        v-if="showCopyButton"
         class="copy-button"
         :style="{
           backgroundImage: `url(${bindButtonImage})`,
@@ -167,6 +166,7 @@ const handleCopy = async () => {
 <style scoped>
 .custom-input {
   width: 100%;
+  padding-left: 12px;
   height: 56px;
   display: flex;
   align-items: center;
@@ -179,19 +179,27 @@ const handleCopy = async () => {
 .left-icon {
   width: 24px;
   height: 24px;
-  margin-left: 12px;
   flex-shrink: 0;
 }
 
-.input-field {
-  flex: 1;
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
   height: 100%;
+  padding: 0 12px;
+}
+
+.input-field {
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
   border: none;
   outline: none;
-  background: transparent;
-  padding: 0 12px;
-  color: var(--text-color, #fff);
-  font-size: 16px;
+  color: #fff;
+  font-size: 14px;
+  padding: 0;
 }
 
 .input-field::placeholder {
@@ -201,7 +209,6 @@ const handleCopy = async () => {
 .right-buttons {
   display: flex;
   gap: 8px;
-  margin-right: 12px;
 }
 
 .clear-icon {
@@ -218,5 +225,17 @@ const handleCopy = async () => {
   color: #000;
   font-size: 12px;
   font-weight: 700;
+}
+
+.action-button {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  z-index: 1;
 }
 </style>
