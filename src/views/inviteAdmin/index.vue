@@ -5,7 +5,7 @@
       paddingTop: userInfoStore.safeTop + 'px',
     }"
   >
-    <CustomNavBar class="invite-admin-page-navbar" />
+    <CustomNavBar class="invite-admin-page-navbar" @back="handleBack" />
     <div class="user-info">
       <img class="avatar" :src="userInfo?.user.avatar || AvatarImg" alt="" />
       <div class="info-wrapper" v-if="userInfo">
@@ -172,6 +172,7 @@ import {
 import { useUserInfoStore } from '@/stores/userInfo'
 const userInfoStore = useUserInfoStore()
 import { useI18n } from 'vue-i18n'
+import nativeEvent from '@/utils/nativeEvent'
 
 const { t } = useI18n()
 
@@ -189,6 +190,10 @@ const tokens = [
     name: 'GEM',
   },
 ]
+
+const handleBack = () => {
+  nativeEvent.close()
+}
 
 const levelTabs = computed(() => {
   const tabs = []
