@@ -13,7 +13,6 @@
         :disabled="disabled"
       />
       <button
-        v-if="showCopyButton"
         class="copy-button"
         :style="{
           backgroundImage: `url(${bindButtonImage})`,
@@ -118,33 +117,31 @@ const handleInput = (event: Event) => {
 
 const copyToClipboard = async (text: string) => {
   try {
-    // 尝试使用现代 API
-    if (navigator.clipboard && window.isSecureContext) {
-      await navigator.clipboard.writeText(text)
-      return true
-    } else {
-      // 降级方案：使用 document.execCommand
-      const textArea = document.createElement('textarea')
-      textArea.value = text
+    // 优先使用 document.execCommand
+    const textArea = document.createElement('textarea')
+    textArea.value = text
+    textArea.style.position = 'fixed'
+    textArea.style.left = '-9999px'
+    textArea.style.top = '0'
+    textArea.setAttribute('readonly', 'readonly')
+    document.body.appendChild(textArea)
 
-      // 避免滚动到视图中
-      textArea.style.top = '0'
-      textArea.style.left = '0'
-      textArea.style.position = 'fixed'
-      textArea.style.opacity = '0'
+    // 选择文本
+    textArea.select()
+    textArea.setSelectionRange(0, textArea.value.length)
 
-      document.body.appendChild(textArea)
-      textArea.focus()
-      textArea.select()
-
-      try {
-        const successful = document.execCommand('copy')
-        document.body.removeChild(textArea)
-        return successful
-      } catch (err) {
-        document.body.removeChild(textArea)
-        return false
+    try {
+      const successful = document.execCommand('copy')
+      document.body.removeChild(textArea)
+      return successful
+    } catch (err) {
+      document.body.removeChild(textArea)
+      // 如果 execCommand 失败，尝试使用 clipboard API
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text)
+        return true
       }
+      return false
     }
   } catch (err) {
     console.error('复制失败:', err)
