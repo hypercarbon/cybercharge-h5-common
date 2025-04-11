@@ -85,8 +85,10 @@ const inputCode = ref('')
 const getChannelFromUrl = () => {
   // 优先从路由参数获取
   const routeChannel = route.query.channelId as string
+  // console.log('routeChannel', routeChannel)
   if (routeChannel) {
-    channel.value = routeChannel
+    // 如果channelId是数组，取第一个值
+    channel.value = Array.isArray(routeChannel) ? routeChannel[0] : routeChannel
     return
   }
 
