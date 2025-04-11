@@ -8,32 +8,43 @@
   >
     <CustomNavBar @back="handleBack" />
     <div class="binding-inviter-content">
-      <div class="info-content" v-if="inviterInfo">
-        <img src="./images/default-avatar.png" alt="avatar" />
-        <div class="desc">{{ desc }}</div>
+      <!-- 骨架屏 -->
+      <div v-if="loading" class="skeleton-container">
+        <div class="skeleton-avatar"></div>
+        <div class="skeleton-desc"></div>
+        <div class="skeleton-input"></div>
+        <div class="skeleton-button"></div>
       </div>
-      <CustomInput
-        v-model="inputCode"
-        :placeholder="t('bindingInviter.Placeholder')"
-        :disabled="inviterInfo !== null || !userInfo"
-        :channel="channel"
-        :show-clear-button="true"
-        :show-copy-button="inviterInfo !== null"
-        background-color="rgba(0, 0, 0, 0.25)"
-        @keyup.enter="handleBindInviter"
-      />
 
-      <button
-        v-if="!inviterInfo"
-        class="bind-button"
-        :style="{
-          backgroundImage: `url(${bindButtonImage})`,
-          color: channel === '1' ? '#000' : '#fff',
-        }"
-        @click="handleBindInviter"
-      >
-        {{ t('bindingInviter.BindNow') }}
-      </button>
+      <!-- 实际内容 -->
+      <template v-else>
+        <div class="info-content" v-if="inviterInfo">
+          <img src="./images/default-avatar.png" alt="avatar" />
+          <div class="desc">{{ desc }}</div>
+        </div>
+        <CustomInput
+          v-model="inputCode"
+          :placeholder="t('bindingInviter.Placeholder')"
+          :disabled="inviterInfo !== null || !userInfo"
+          :channel="channel"
+          :show-clear-button="true"
+          :show-copy-button="inviterInfo !== null"
+          background-color="rgba(0, 0, 0, 0.25)"
+          @keyup.enter="handleBindInviter"
+        />
+
+        <button
+          v-if="!inviterInfo"
+          class="bind-button"
+          :style="{
+            backgroundImage: `url(${bindButtonImage})`,
+            color: channel === '1' ? '#000' : '#fff',
+          }"
+          @click="handleBindInviter"
+        >
+          {{ t('bindingInviter.BindNow') }}
+        </button>
+      </template>
     </div>
   </div>
 </template>
@@ -81,6 +92,9 @@ const userInfo = ref<UserInfo>()
 const inviterInfo = ref<InviterInfo>(null)
 // 邀请码相关
 const inputCode = ref('')
+// 添加加载状态
+const loading = ref(true)
+
 // 获取渠道参数
 const getChannelFromUrl = () => {
   // 优先从路由参数获取
@@ -142,10 +156,22 @@ const bindButtonImage = computed(() => {
 })
 
 onMounted(async () => {
-  getChannelFromUrl()
-  console.log('当前渠道：', channel.value)
-  await _getUserInfo()
-  await _getInviterInfo()
+  try {
+    getChannelFromUrl()
+    console.log('当前渠道：', channel.value)
+
+    // 先获取用户信息
+    await _getUserInfo()
+    // 再获取邀请人信息
+    if (userInfo.value) {
+      await _getInviterInfo()
+    }
+  } catch (error) {
+    console.error('加载数据失败:', error)
+    showToast(t('common.LoadFailed'))
+  } finally {
+    loading.value = false
+  }
 })
 
 const _getUserInfo = async () => {
@@ -233,5 +259,79 @@ const _bindChannelInviter = async () => {
   color: #000;
   font-size: 16px;
   font-weight: 600;
+}
+
+/* 骨架屏样式 */
+.skeleton-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 0 24px;
+}
+
+.skeleton-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.1) 25%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.1) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+}
+
+.skeleton-desc {
+  width: 200px;
+  height: 18px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.1) 25%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.1) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: 4px;
+}
+
+.skeleton-input {
+  width: 100%;
+  height: 48px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.1) 25%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.1) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: 8px;
+}
+
+.skeleton-button {
+  width: 100%;
+  height: 48px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.1) 25%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.1) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: 8px;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 </style>
