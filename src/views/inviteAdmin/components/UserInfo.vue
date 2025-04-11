@@ -1,9 +1,17 @@
 <template>
   <div class="user-info">
     <img class="avatar" :src="userInfo?.user.avatar || AvatarImg" alt="" />
-    <div class="info-wrapper" v-if="userInfo">
-      <p class="username">{{ userInfo?.user.username }}</p>
-      <p class="user-id">ID {{ userInfo?.user.id }}</p>
+    <div class="info-wrapper">
+      <skeleton v-if="!userInfo" width="180px" height="20px" />
+      <p v-else class="username">{{ userInfo?.user.username }}</p>
+
+      <skeleton
+        style="margin-top: 4px"
+        v-if="!userInfo"
+        width="100px"
+        height="20px"
+      />
+      <p v-else class="user-id">ID {{ userInfo?.user.id }}</p>
     </div>
   </div>
 </template>
@@ -12,6 +20,7 @@
 import { defineProps } from 'vue'
 import AvatarImg from '../images/avatar.png'
 import { type UserInfo } from '@/services/bindingInviter'
+import Skeleton from './Skeleton.vue'
 
 defineProps<{
   userInfo?: UserInfo
@@ -28,10 +37,11 @@ defineProps<{
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.3);
   }
   .info-wrapper {
     margin-left: 12px;
+
     .username {
       color: #fff;
       font-size: 16px;

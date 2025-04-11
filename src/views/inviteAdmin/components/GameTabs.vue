@@ -1,5 +1,18 @@
 <template>
   <div class="game-tabs">
+    <skeleton
+      v-if="channelList.length === 0"
+      border-radius="99px"
+      width="100px"
+      height="40px"
+    />
+    <skeleton
+      v-if="channelList.length === 0"
+      border-radius="99px"
+      width="100px"
+      height="40px"
+    />
+
     <div
       :class="[
         'game-item',
@@ -20,6 +33,7 @@
 <script setup lang="ts">
 import { defineProps, defineEmits } from 'vue'
 import { type Channel } from '@/services/bindingInviter'
+import Skeleton from './Skeleton.vue'
 
 defineProps<{
   channelList: Channel[]

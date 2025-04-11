@@ -10,10 +10,18 @@
         <span class="assets-col">{{ t('inviteAdmin.WeeklyEarnings') }}</span>
       </div>
       <div class="assets-tb assets-row">
-        <span class="assets-col">{{ totalAmount || 0 }}</span>
-        <span class="assets-col">{{ weekAmount || 0 }}</span>
+        <span v-if="rewardDetail" class="assets-col">{{
+          rewardDetail.totalAmount || 0
+        }}</span>
+        <skeleton v-else width="100px" height="24px" />
+
+        <span v-if="rewardDetail" class="assets-col">{{
+          rewardDetail.weekAmount || 0
+        }}</span>
+        <skeleton v-else width="100px" height="24px" />
       </div>
     </div>
+    <img class="shadow-img" :src="ShadowImg" alt="" />
   </div>
 </template>
 
@@ -21,12 +29,13 @@
 import { defineProps } from 'vue'
 import { useI18n } from 'vue-i18n'
 import GemImg from '../images/img_assets.png'
-
+import ShadowImg from '../images/assets_bg_shadow.png'
+import Skeleton from './Skeleton.vue'
+import type { RewardDetail } from '@/services/bindingInviter'
 const { t } = useI18n()
 
 defineProps<{
-  totalAmount?: number
-  weekAmount?: number
+  rewardDetail: RewardDetail | undefined
 }>()
 </script>
 
@@ -35,6 +44,7 @@ defineProps<{
   position: relative;
   width: 100%;
   height: 134px;
+  margin-bottom: 20px;
   &:before {
     content: '';
     position: absolute;
@@ -47,17 +57,13 @@ defineProps<{
     background-position: center;
     z-index: -1;
   }
-  &::after {
-    content: '';
+  .shadow-img {
     position: absolute;
     width: 319px;
     height: 78px;
     left: 50%;
     transform: translate(-50%);
-    bottom: -20px;
-    background-image: url('../images/assets_bg_shadow.png');
-    background-size: cover;
-    background-position: bottom;
+    bottom: -16px;
     z-index: -2;
   }
   .content {
@@ -96,6 +102,10 @@ defineProps<{
       color: #000;
       font-size: 24px;
       font-weight: 700;
+      .skeleton {
+        width: 100px;
+        padding: 0;
+      }
     }
   }
 }

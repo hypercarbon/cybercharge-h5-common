@@ -1,4 +1,4 @@
-import { DEV_URL } from '@/config/constants'
+import { INVITE_URL } from '@/config/constants'
 import type { Result } from '@/types/utils'
 import axiosInstance from '@/utils/axiosInstance'
 
@@ -84,7 +84,7 @@ export const getRewardDetail = (params: {
  * @returns
  */
 export const getChannelList = (): Promise<Result<Channel[]>> =>
-  axiosInstance.get(DEV_URL + '/gateway/invite-service/api/v1/channel/list')
+  axiosInstance.get(INVITE_URL + '/gateway/invite-service/api/v1/channel/list')
 
 /**
  * 获取邀请人信息
@@ -94,7 +94,7 @@ export const getChannelList = (): Promise<Result<Channel[]>> =>
 export const getInviterInfo = (
   params: CommonParams,
 ): Promise<Result<InviterInfo>> =>
-  axiosInstance.get(DEV_URL + '/gateway/invite-service/api/v1/invite/get', {
+  axiosInstance.get(INVITE_URL + '/gateway/invite-service/api/v1/invite/get', {
     params,
   })
 
@@ -116,7 +116,7 @@ export const bindChannelInviter = (
 export const getDetailsUrl = (
   channelId: string,
 ): Promise<Result<ChannelDetails>> =>
-  axiosInstance.get(DEV_URL + '/gateway/invite-service/api/v1/channel/get', {
+  axiosInstance.get(INVITE_URL + '/gateway/invite-service/api/v1/channel/get', {
     params: {
       channelId,
     },
