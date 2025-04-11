@@ -3,7 +3,7 @@ name: Deploy to Test Server
 on:
   push:
     branches:
-      - master
+      - test
 
 jobs:
   deploy:
@@ -24,7 +24,7 @@ jobs:
             # Your commands to run on the EC2 instance
             sudo -i
             cd /opt/wwwroot/cybercharge-h5-common
-            git pull origin master
+            git pull origin test
             pnpm install
             pnpm run build-only --mode test
             docker build -t localhost:5000/cybercharge-h5-common-app:latest .
