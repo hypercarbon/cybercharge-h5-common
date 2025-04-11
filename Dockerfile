@@ -10,7 +10,7 @@ RUN npm install -g pnpm
 RUN pnpm install --frozen-lockfile
 
 # 构建应用
-RUN pnpm run build-only --mode test
+RUN pnpm run build-only --mode production
 
 # 第二阶段：部署到 nginx
 FROM nginx:latest
