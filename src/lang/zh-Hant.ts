@@ -159,7 +159,7 @@ export default {
     BottomLineText: '已經到頂囉～',
   },
   bindingInviter: {
-    MyInviter: '我的推薦人',
+    MyInviter: '我的邀請人',
     Copy: '複製',
     CopySuccess: '複製成功',
     CopyFailed: '複製失敗',
@@ -168,5 +168,6 @@ export default {
     Placeholder: '輸入邀請碼',
     PleaseEnterInviteCode: '請輸入邀請碼',
     PleaseEnterCorrectUserId: '請輸入正確的邀請碼',
+    Details: '詳情',
   },
 }

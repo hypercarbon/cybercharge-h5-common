@@ -171,5 +171,6 @@ export default {
     Placeholder: 'Введите пригласительный код',
     PleaseEnterInviteCode: 'Введите пригласительный код',
     PleaseEnterCorrectUserId: 'Введите правильный пригласительный код',
+    Details: 'Подробнее',
   },
 }

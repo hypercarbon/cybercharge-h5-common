@@ -160,7 +160,7 @@ export default {
     BottomLineText: '여기가 끝이에요~',
   },
   bindingInviter: {
-    MyInviter: '나의 초대자',
+    MyInviter: '내 초대인',
     Copy: '복사',
     CopySuccess: '복사 성공',
     CopyFailed: '복사 실패',
@@ -169,5 +169,6 @@ export default {
     Placeholder: '초대 코드 입력',
     PleaseEnterInviteCode: '초대 코드 입력',
     PleaseEnterCorrectUserId: '초대 코드가 올바른지 확인해주세요',
+    Details: '상세',
   },
 }

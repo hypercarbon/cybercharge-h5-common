@@ -160,7 +160,7 @@ export default {
     BottomLineText: 'Sudah sampai ujung!~',
   },
   bindingInviter: {
-    MyInviter: 'Pembawa Saya',
+    MyInviter: 'Pengundang saya',
     Copy: 'Salin',
     CopySuccess: 'Salin berhasil',
     CopyFailed: 'Salin gagal',
@@ -169,5 +169,6 @@ export default {
     Placeholder: 'Masukkan kode undangan',
     PleaseEnterInviteCode: 'Masukkan kode undangan',
     PleaseEnterCorrectUserId: 'Masukkan kode undangan yang benar',
+    Details: 'Detail',
   },
 }

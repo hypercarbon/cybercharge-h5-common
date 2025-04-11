@@ -8,7 +8,7 @@ type BindChannelInviterParams = {
 }
 
 type CommonParams = {
-  userId: string
+  userId: string | number
   channelId: string
 }
 
@@ -57,6 +57,15 @@ export type UserInfo = {
   isSetPassword: boolean
 }
 
+export type ChannelDetails = {
+  channelCode: string
+  channelId: number
+  channelName: string
+  detailUrl: string
+  icon: string
+  inviteUrl: string
+}
+
 export const getUserInfo = (): Promise<Result<UserInfo>> =>
   axiosInstance.get('/api/user')
 
@@ -98,3 +107,17 @@ export const bindChannelInviter = (
   params: BindChannelInviterParams,
 ): Promise<Result> =>
   axiosInstance.post('/api/user/inviter/bindChannelInviter', params)
+
+/**
+ * 获取渠道详情
+ * @param channelId
+ * @returns
+ */
+export const getDetailsUrl = (
+  channelId: string,
+): Promise<Result<ChannelDetails>> =>
+  axiosInstance.get(DEV_URL + '/gateway/invite-service/api/v1/channel/get', {
+    params: {
+      channelId,
+    },
+  })

@@ -3,22 +3,32 @@
     <div class="customNavBarBackBtn" @click="handleBack">
       <BackIcon class="backIcon" />
     </div>
-    <span class="title">{{ t('bindingInviter.MyInviter') }}</span>
+    <span class="title">{{ title }}</span>
+    <div v-if="extra" class="extra-button" @click="handleExtraClick">
+      {{ extra }}
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import BackIcon from '../Icon/icon_back.vue'
-import { useI18n } from 'vue-i18n'
 
-const { t } = useI18n()
+defineProps<{
+  title: string
+  extra?: string
+}>()
 
 const emit = defineEmits<{
   (e: 'back'): void
+  (e: 'extra-click'): void
 }>()
 
 const handleBack = () => {
   emit('back')
+}
+
+const handleExtraClick = () => {
+  emit('extra-click')
 }
 </script>
 
@@ -47,6 +57,14 @@ const handleBack = () => {
   .title {
     color: #fff;
     margin: 0 auto;
+  }
+  .extra-button {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 15px;
   }
 }
 </style>

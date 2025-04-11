@@ -139,7 +139,7 @@ const copyToClipboard = async (text: string) => {
       const successful = document.execCommand('copy')
       document.body.removeChild(textArea)
       return successful
-    } catch (err) {
+    } catch {
       document.body.removeChild(textArea)
       // 如果 execCommand 失败，尝试使用 clipboard API
       if (navigator.clipboard && window.isSecureContext) {

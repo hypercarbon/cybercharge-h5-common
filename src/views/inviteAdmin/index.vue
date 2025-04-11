@@ -5,30 +5,19 @@
       paddingTop: userInfoStore.safeTop + 'px',
     }"
   >
-    <CustomNavBar class="invite-admin-page-navbar" @back="handleBack" />
-    <div class="user-info">
-      <img class="avatar" :src="userInfo?.user.avatar || AvatarImg" alt="" />
-      <div class="info-wrapper" v-if="userInfo">
-        <p class="username">{{ userInfo?.user.username }}</p>
-        <p class="user-id">ID {{ userInfo?.user.id }}</p>
-      </div>
-    </div>
-    <div class="game-tabs">
-      <div
-        :class="[
-          'game-item',
-          activeChannelTab === channel.channelId ? 'active' : null,
-        ]"
-        v-for="channel in channelList"
-        :key="channel.channelId"
-        @click="handleClickChannel(channel.channelId)"
-      >
-        <img :src="channel.icon" alt="" />
-        <span class="game-name">
-          {{ channel.channelName }}
-        </span>
-      </div>
-    </div>
+    <CustomNavBar
+      class="invite-admin-page-navbar"
+      @back="handleBack"
+      :title="t('inviteAdmin.Title')"
+      extra="规则"
+      @extra-click="handleRuleClick"
+    />
+    <UserInfo :user-info="userInfo" />
+    <GameTabs
+      :channel-list="channelList"
+      :active-channel-tab="activeChannelTab"
+      @update:active-channel-tab="handleClickChannel"
+    />
     <div class="game-tabs-content">
       <van-tabs
         class="token-tabs-container"
@@ -83,44 +72,11 @@
               :key="levelItem.id"
             >
               <ul class="users-list" v-if="index !== 2">
-                <li
-                  class="user-item"
+                <UserItem
                   v-for="user in levelItem.details"
                   :key="user.userId"
-                >
-                  <img
-                    class="avatar"
-                    :src="user.user.avatar || UserAvatar"
-                    alt=""
-                  />
-                  <div class="user-info-card">
-                    <p class="name">{{ user.userId }}</p>
-                    <p class="id">ID:{{ user.userId }}</p>
-
-                    <div class="assets-row">
-                      <span class="assets-label">{{
-                        t('inviteAdmin.WeeklyContribution')
-                      }}</span>
-                      <img :src="GemImg" alt="" />
-                      <span class="assets-num">{{ user.totalAmount }}</span>
-                    </div>
-                    <p class="time">
-                      {{ formatTimestamp(user.invitationTime) }}
-                      {{ t('inviteAdmin.Joined') }}
-                    </p>
-                  </div>
-                  <div class="total-info">
-                    <div class="assets-info">
-                      <img :src="GemImg" alt="" />
-                      <span class="assets-total-num">{{
-                        user.weekAmount
-                      }}</span>
-                    </div>
-                    <span class="info-text">{{
-                      t('inviteAdmin.TotalContribution')
-                    }}</span>
-                  </div>
-                </li>
+                  :user="user"
+                />
                 <li class="bottom-line">
                   {{ t('inviteAdmin.BottomLineText') }}
                 </li>
@@ -156,22 +112,25 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import CustomNavBar from './components/CustomNavBar.vue'
-import AvatarImg from './images/avatar.png'
+import UserItem from './components/UserItem.vue'
+import UserInfo from './components/UserInfo.vue'
+import GameTabs from './components/GameTabs.vue'
 import GemImg from './images/img_assets.png'
-import UserAvatar from './images/user_avatar.png'
-import { formatTimestamp } from '@/utils/utils'
 import {
   getUserInfo,
-  type UserInfo,
+  type UserInfo as UserInfoType,
   getChannelList,
   type Channel,
   getRewardDetail,
   type RewardDetail,
+  type LevelUser,
 } from '@/services/bindingInviter'
 import { useUserInfoStore } from '@/stores/userInfo'
 const userInfoStore = useUserInfoStore()
 import { useI18n } from 'vue-i18n'
 import nativeEvent from '@/utils/nativeEvent'
+import InfoCard from './components/InfoCard.vue'
+import OtherLevelInfo from './components/OtherLevelInfo.vue'
 
 const { t } = useI18n()
 
@@ -179,7 +138,7 @@ const activeChannelTab = ref(0)
 const activeAsstesTab = ref(0)
 const activeInviteTab = ref(0)
 
-const userInfo = ref<UserInfo>()
+const userInfo = ref<UserInfoType>()
 const channelList = ref<Channel[]>([])
 const rewardDetail = ref<RewardDetail>()
 
@@ -194,6 +153,11 @@ const handleBack = () => {
   nativeEvent.close()
 }
 
+const handleRuleClick = () => {
+  console.log('Rule button clicked')
+  // 在这里添加规则按钮的点击处理逻辑
+}
+
 const levelTabs = computed(() => {
   const tabs = []
 
@@ -202,7 +166,7 @@ const levelTabs = computed(() => {
       id: 1,
       name: t('inviteAdmin.Direct'),
       num: rewardDetail.value?.oneLevels.length,
-      details: rewardDetail.value?.oneLevels,
+      details: rewardDetail.value?.oneLevels as LevelUser[],
     })
   }
   if (rewardDetail.value?.twoLevels) {
@@ -210,7 +174,7 @@ const levelTabs = computed(() => {
       id: 2,
       name: t('inviteAdmin.Indirect'),
       num: rewardDetail.value?.twoLevels.length,
-      details: rewardDetail.value?.twoLevels,
+      details: rewardDetail.value?.twoLevels as LevelUser[],
     })
   }
   if (rewardDetail.value?.otherLevels) {
@@ -218,7 +182,10 @@ const levelTabs = computed(() => {
       id: 3,
       name: t('inviteAdmin.More'),
       num: 0,
-      details: rewardDetail.value?.otherLevels,
+      details: rewardDetail.value?.otherLevels as {
+        totalAmount: number
+        weekAmount: number
+      },
     })
   }
 
@@ -277,81 +244,6 @@ const _getRewardDetail = async () => {
   .invite-admin-page-navbar {
     flex-shrink: 0;
   }
-  .user-info {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    padding: 12px 14px 24px;
-    .avatar {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-    }
-    .info-wrapper {
-      margin-left: 12px;
-      .username {
-        color: #fff;
-        font-size: 16px;
-        font-weight: 700;
-      }
-      .user-id {
-        color: rgba(255, 255, 255, 0.7);
-        font-size: 12px;
-        font-weight: 500;
-      }
-    }
-  }
-  .game-tabs {
-    min-height: 56px;
-    flex-shrink: 0;
-    display: flex;
-    gap: 12px;
-    flex-wrap: nowrap;
-    overflow: auto;
-    padding: 0 14px 20px;
-    .game-item {
-      position: relative;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      padding: 6px 16px;
-      border-radius: 99px;
-      background: rgba(255, 255, 255, 0.15);
-      &::before {
-        position: absolute;
-        content: '';
-        width: 0px;
-        height: 0px;
-        border-width: 8px;
-        border-style: solid;
-        border-color: #fff transparent transparent transparent;
-        left: 50%;
-        transform: translateX(-50%);
-        bottom: -15px;
-        display: none;
-      }
-      img {
-        width: 24px;
-        height: 24px;
-      }
-      .game-name {
-        font-size: 15px;
-        color: #fff;
-        font-weight: 500;
-        white-space: nowrap;
-      }
-      &.active {
-        background: #fff;
-        &::before {
-          display: block;
-        }
-        .game-name {
-          color: #000;
-        }
-      }
-    }
-  }
   .game-tabs-content {
     width: 100%;
     flex-grow: 1;
@@ -360,6 +252,19 @@ const _getRewardDetail = async () => {
     padding: 20px 14px;
     overflow: auto;
     min-height: 0;
+  }
+}
+
+.users-list {
+  display: flex;
+  flex-direction: column;
+  .bottom-line {
+    width: 100%;
+    padding: 24px 0 18px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 400;
+    color: #999;
   }
 }
 </style>
@@ -376,7 +281,6 @@ const _getRewardDetail = async () => {
       border-color: #fff !important;
       gap: 8px !important;
       .token-tab-title {
-        /* margin-left: 8px; */
         flex: 0;
         padding: 0 12px;
         width: 80px !important;
@@ -412,7 +316,7 @@ const _getRewardDetail = async () => {
           background-image: url('./images/assets_bg.png');
           background-size: cover;
           background-position: center;
-          z-index: -1; /* 确保背景图在内容下面 */
+          z-index: -1;
         }
         &::after {
           content: '';
@@ -425,13 +329,13 @@ const _getRewardDetail = async () => {
           background-image: url('./images/assets_bg_shadow.png');
           background-size: cover;
           background-position: bottom;
-          z-index: -2; /* 确保背景图在内容下面 */
+          z-index: -2;
         }
         .content {
           position: absolute;
-          top: 50%; /* 内容垂直居中 */
-          left: 50%; /* 内容水平居中 */
-          transform: translate(-50%, -50%); /* 精确地将内容居中 */
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
           padding: 16px 12px 24px;
           height: 100%;
           width: 100%;
@@ -468,109 +372,6 @@ const _getRewardDetail = async () => {
       }
       .level-tabs-container {
         .van-tabs__nav {
-          /* padding-bottom: 0 !important; */
-        }
-        .users-list {
-          display: flex;
-          flex-direction: column;
-          .user-item {
-            position: relative;
-            padding: 24px 0 16px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-            display: flex;
-            align-items: flex-start;
-            &::after {
-              position: absolute;
-              bottom: 0;
-              /* right: -20px; */
-              content: '';
-              height: 1px;
-              width: 100%;
-              background: #f2f2f2;
-            }
-            .avatar {
-              height: 38px;
-              width: 38px;
-              border-radius: 50%;
-              margin-right: 8px;
-            }
-            .user-info-card {
-              flex: 1;
-              .name {
-                font-size: 15px;
-                font-weight: 700;
-              }
-              .id {
-                margin-top: 4px;
-
-                color: #737373;
-                font-weight: 400;
-              }
-              .assets-row {
-                margin-top: 8px;
-
-                display: flex;
-                align-items: center;
-                .assets-label {
-                  font-size: 12px;
-                  font-weight: 400;
-                  color: #737373;
-                }
-                img {
-                  margin: 0 2px 0 4px;
-                  height: 14px;
-                  width: 14px;
-                }
-                .assets-num {
-                  font-size: 14px;
-                  font-weight: 700;
-                  color: #333;
-                }
-              }
-              .time {
-                margin-top: 16px;
-                color: #999;
-                font-size: 12px;
-              }
-            }
-            .total-info {
-              display: flex;
-              flex-direction: column;
-              align-items: flex-end;
-              gap: 4px;
-              .assets-info {
-                display: flex;
-                align-items: center;
-                gap: 4px;
-                margin-top: 4px;
-                img {
-                  width: 16px;
-                  height: 16px;
-                }
-                .assets-total-num {
-                  font-size: 16px;
-                  font-weight: 700;
-                  color: #000;
-                }
-              }
-              .info-text {
-                font-size: 12px;
-                font-weight: 400;
-                color: #737373;
-              }
-            }
-            &:nth-of-type(1) {
-              padding-top: 6px !important;
-            }
-          }
-          .bottom-line {
-            width: 100%;
-            padding: 24px 0 18px;
-            text-align: center;
-            font-size: 12px;
-            font-weight: 400;
-            color: #999;
-          }
         }
         .other-level-info {
           .other-level-info-item {

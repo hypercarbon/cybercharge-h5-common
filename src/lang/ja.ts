@@ -161,7 +161,7 @@ export default {
     BottomLineText: 'ここが最下部です～',
   },
   bindingInviter: {
-    MyInviter: '紹介者',
+    MyInviter: '招待者',
     Copy: 'コピー',
     CopySuccess: 'コピー成功',
     CopyFailed: 'コピーに失敗しました',
@@ -170,5 +170,6 @@ export default {
     Placeholder: '招待コードを入力してください',
     PleaseEnterInviteCode: '招待コードを入力してください',
     PleaseEnterCorrectUserId: '招待コードが正しいか確認してください',
+    Details: '詳細',
   },
 }

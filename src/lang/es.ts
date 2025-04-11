@@ -161,7 +161,7 @@ export default {
     BottomLineText: '¡Llegaste al final!~',
   },
   bindingInviter: {
-    MyInviter: 'Mi Invitador',
+    MyInviter: 'Invitado por',
     Copy: 'Copiar',
     CopySuccess: 'Copiado con éxito',
     CopyFailed: 'Copiado fallido',
@@ -170,5 +170,6 @@ export default {
     Placeholder: 'Introduce código',
     PleaseEnterInviteCode: 'Introduce código',
     PleaseEnterCorrectUserId: 'Introduce código correcto',
+    Details: 'Detalles',
   },
 }

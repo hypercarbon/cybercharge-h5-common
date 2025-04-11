@@ -6,7 +6,12 @@
       paddingTop: userInfoStore.safeTop + 'px',
     }"
   >
-    <CustomNavBar @back="handleBack" />
+    <CustomNavBar
+      @back="handleBack"
+      :title="t('bindingInviter.MyInviter')"
+      :extra="t('bindingInviter.Details')"
+      @extra-click="handleClickExtra"
+    />
     <div class="binding-inviter-content">
       <!-- 骨架屏 -->
       <div v-if="loading" class="skeleton-container">
@@ -63,6 +68,7 @@ import {
   getUserInfo,
   type UserInfo,
   type InviterInfo,
+  getDetailsUrl,
 } from '@/services/bindingInviter'
 import bg1 from './images/1/bg.png'
 import bg2 from './images/2/bg.png'
@@ -94,6 +100,8 @@ const inviterInfo = ref<InviterInfo>(null)
 const inputCode = ref('')
 // 添加加载状态
 const loading = ref(true)
+// 详情页地址
+const detailsUrl = ref('')
 
 // 获取渠道参数
 const getChannelFromUrl = () => {
@@ -113,6 +121,17 @@ const getChannelFromUrl = () => {
     channel.value = urlChannel
   } else {
     channel.value = '1'
+  }
+}
+
+const handleClickExtra = () => {
+  if (detailsUrl.value) {
+    nativeEvent.openUrl({
+      url: detailsUrl.value,
+      pageSetting: {
+        isBarHide: true,
+      },
+    })
   }
 }
 
@@ -159,13 +178,9 @@ onMounted(async () => {
   try {
     getChannelFromUrl()
     console.log('当前渠道：', channel.value)
-
-    // 先获取用户信息
-    await _getUserInfo()
-    // 再获取邀请人信息
-    if (userInfo.value) {
-      await _getInviterInfo()
-    }
+    _getDetailsUrl() // 获取详情页地址
+    await _getUserInfo() // 用户信息
+    await _getInviterInfo() // 邀请人信息
   } catch (error) {
     console.error('加载数据失败:', error)
   } finally {
@@ -182,16 +197,19 @@ const _getUserInfo = async () => {
 }
 
 const _getInviterInfo = async () => {
-  const res = await getInviterInfo({
-    channelId: channel.value,
-    userId: userInfo.value?.user.id,
-  })
-  if (res.code === 0) {
-    inviterInfo.value = res.data
-    if (res.data) {
-      inputCode.value = res.data
+  // 再获取邀请人信息
+  if (userInfo.value && userInfo.value.user.id) {
+    const res = await getInviterInfo({
+      channelId: channel.value,
+      userId: userInfo.value?.user.id,
+    })
+    if (res.code === 0) {
+      inviterInfo.value = res.data
+      if (res.data) {
+        inputCode.value = String(res.data)
+      }
+      console.log('inviterInfo', inviterInfo.value)
     }
-    console.log('inviterInfo', inviterInfo.value)
   }
 }
 
@@ -206,8 +224,16 @@ const _bindChannelInviter = async () => {
       _getInviterInfo()
     }
   } catch (error) {
-    const errData = error.response.data
-    showToast(errData.msg)
+    console.log('errData', error)
+    showToast(error.msg)
+  }
+}
+
+const _getDetailsUrl = async () => {
+  const res = await getDetailsUrl(channel.value)
+  if (res.code === 0) {
+    console.log('res', res)
+    detailsUrl.value = res.data.detailUrl
   }
 }
 </script>

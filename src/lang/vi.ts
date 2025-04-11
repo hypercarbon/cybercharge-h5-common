@@ -160,7 +160,7 @@ export default {
     BottomLineText: 'Đến giới hạn rồi~',
   },
   bindingInviter: {
-    MyInviter: 'Người mời tôi',
+    MyInviter: 'Người mời của tôi',
     Copy: 'Sao chép',
     CopySuccess: 'Sao chép thành công',
     CopyFailed: 'Sao chép thất bại',
@@ -169,5 +169,6 @@ export default {
     Placeholder: 'Nhập mã mời',
     PleaseEnterInviteCode: 'Nhập mã mời',
     PleaseEnterCorrectUserId: 'Nhập mã mời đúng',
+    Details: 'Chi tiết',
   },
 }

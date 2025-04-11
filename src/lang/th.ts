@@ -161,7 +161,7 @@ export default {
     BottomLineText: 'ถึงที่สุดแล้ว~',
   },
   bindingInviter: {
-    MyInviter: 'ผู้อัญเชิญฉัน',
+    MyInviter: 'เชิญโดย',
     Copy: 'คัดลอก',
     CopySuccess: 'คัดลอกสำเร็จ',
     CopyFailed: 'คัดลอกไม่สำเร็จ',
@@ -170,5 +170,6 @@ export default {
     Placeholder: 'ป้อนรหัสเชิญ',
     PleaseEnterInviteCode: 'ป้อนรหัสเชิญ',
     PleaseEnterCorrectUserId: 'ป้อนรหัสเชิญที่ถูกต้อง',
+    Details: 'รายละเอียด',
   },
 }
