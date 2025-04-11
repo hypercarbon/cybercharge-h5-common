@@ -60,7 +60,7 @@ const handleExtraClick = () => {
   }
   .extra-button {
     position: absolute;
-    right: 16px;
+    right: 26px;
     top: 50%;
     transform: translateY(-50%);
     color: rgba(255, 255, 255, 0.7);
