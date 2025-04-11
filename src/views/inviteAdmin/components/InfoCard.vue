@@ -44,7 +44,7 @@ defineProps<{
   position: relative;
   width: 100%;
   height: 134px;
-  margin-bottom: 20px;
+  margin: 16px 0 20px;
   &:before {
     content: '';
     position: absolute;
@@ -55,7 +55,7 @@ defineProps<{
     background-image: url('../images/assets_bg.png');
     background-size: cover;
     background-position: center;
-    z-index: -1;
+    z-index: 2;
   }
   .shadow-img {
     position: absolute;
@@ -64,7 +64,7 @@ defineProps<{
     left: 50%;
     transform: translate(-50%);
     bottom: -16px;
-    z-index: -2;
+    z-index: 1;
   }
   .content {
     position: absolute;
@@ -74,6 +74,7 @@ defineProps<{
     padding: 16px 12px 24px;
     height: 100%;
     width: 100%;
+    z-index: 3;
     .assets-title {
       display: flex;
       gap: 4px;

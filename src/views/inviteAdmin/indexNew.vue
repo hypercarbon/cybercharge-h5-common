@@ -13,8 +13,46 @@
       @update:active-channel-tab="handleClickChannel"
     />
     <div class="game-tabs-content">
-      <van-tabs
-        v-if="rewardDetail"
+      <div v-for="levelItem in tokens" :key="levelItem.id" class="assets-name">
+        {{ levelItem.name }}
+      </div>
+
+      <InfoCard :reward-detail="rewardDetail" />
+
+      <div v-if="rewardDetail" class="level-tab-container">
+        <span
+          v-for="(levelItem, index) in levelTabs"
+          :key="levelItem.id"
+          class="level-name"
+          :class="{ active: activeInviteTab === index }"
+          @click="handleClickLevel(index)"
+        >
+          {{
+            index < 2 ? `${levelItem.name} (${levelItem.num})` : levelItem.name
+          }}
+        </span>
+      </div>
+
+      <div v-if="rewardDetail">
+        <ul class="users-list" v-if="activeInviteTab !== 2">
+          <UserItem
+            v-for="user in levelTabs[activeInviteTab].details"
+            :key="user.userId"
+            :user="user"
+          />
+          <li class="bottom-line">
+            {{ t('inviteAdmin.BottomLineText') }}
+          </li>
+        </ul>
+
+        <OtherLevelInfo
+          v-else
+          :total-amount="levelTabs[activeInviteTab].details.totalAmount"
+          :week-amount="levelTabs[activeInviteTab].details.weekAmount"
+        />
+      </div>
+
+      <!-- <van-tabs
         class="token-tabs-container"
         v-model:active="activeAsstesTab"
         swipeable
@@ -29,11 +67,35 @@
           :title="item.name"
           :key="item.id"
         >
-          <InfoCard :reward-detail="rewardDetail" />
+          <InfoCard :reward-detail="rewardDetail" /> -->
 
-          <van-tabs
-            ref="levelTabsRef"
-            v-if="rewardDetail"
+      <!-- <span
+            v-for="(levelItem) in levelTabs"
+            :key="levelItem.id"
+            class="game-name"
+            @click="handleClickLevel(levelItem.id)"
+          >
+            {{ levelItem.name }}
+          </span>
+
+          <ul class="users-list" v-if="activeInviteTab !== 2">
+            <UserItem
+              v-for="user in levelTabs[activeInviteTab].details"
+              :key="user.userId"
+              :user="user"
+            />
+            <li class="bottom-line">
+              {{ t('inviteAdmin.BottomLineText') }}
+            </li>
+          </ul>
+          <OtherLevelInfo
+            v-else
+            :total-amount="levelItem.details.totalAmount"
+            :week-amount="levelItem.details.weekAmount"
+          /> -->
+
+      <!-- <van-tabs
+            v-if="levelTabs.length > 0"
             class="level-tabs-container"
             v-model:active="activeInviteTab"
           >
@@ -62,9 +124,9 @@
                 :week-amount="levelItem.details.weekAmount"
               />
             </van-tab>
-          </van-tabs>
-        </van-tab>
-      </van-tabs>
+          </van-tabs> -->
+      <!-- </van-tab>
+      </van-tabs> -->
     </div>
   </div>
 </template>
@@ -100,8 +162,6 @@ const activeInviteTab = ref(0)
 const userInfo = ref<UserInfoType>()
 const channelList = ref<Channel[]>([])
 const rewardDetail = ref<RewardDetail>()
-
-const levelTabsRef = ref()
 
 const tokens = [
   {
@@ -153,6 +213,10 @@ const handleClickChannel = (channelId: number) => {
   _getRewardDetail()
 }
 
+const handleClickLevel = (levelId: number) => {
+  activeInviteTab.value = levelId
+}
+
 onMounted(async () => {
   await _getUserInfo()
   console.log('userInfo', userInfo)
@@ -182,7 +246,6 @@ const _getRewardDetail = async () => {
   })
   if (res.code === 0) {
     rewardDetail.value = res.data
-    levelTabsRef.value.resize()
   }
 
   console.log('res', res)
@@ -208,6 +271,44 @@ const _getRewardDetail = async () => {
     padding: 20px 14px;
     overflow: auto;
     min-height: 0;
+    .assets-name {
+      width: 60px;
+      padding: 7px 14px;
+      border-radius: 99px;
+      background: #7d71ff;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+    }
+    .level-tab-container {
+      display: flex;
+      justify-content: space-between;
+      .level-name {
+        position: relative;
+
+        color: #333;
+        font-size: 14px;
+        font-weight: 700;
+        padding: 7px 14px;
+        &.active {
+          &::before {
+            display: block;
+          }
+        }
+        &::before {
+          content: '';
+          width: 24px;
+          height: 2px;
+          position: absolute;
+          background: #000;
+          border-radius: 99px;
+          bottom: 0;
+          left: 50%;
+          transform: translate(-50%);
+          display: none;
+        }
+      }
+    }
   }
 }
 

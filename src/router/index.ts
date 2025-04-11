@@ -29,7 +29,7 @@ const router = createRouter({
     {
       path: '/inviteAdmin',
       name: 'inviteAdmin',
-      component: () => import('../views/inviteAdmin/index.vue'),
+      component: () => import('../views/inviteAdmin/indexNew.vue'),
       // component: Start,
     },
     {
