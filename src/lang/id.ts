@@ -158,6 +158,7 @@ export default {
     WeeklyContribution: 'Contrib. semanal',
     Joined: 'Bergabung',
     BottomLineText: 'Sudah sampai ujung!~',
+    AssetsTip: 'Tambang GEM mikro dan kecil tidak membagikan laba.',
   },
   bindingInviter: {
     MyInviter: 'Pengundang saya',

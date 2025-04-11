@@ -159,6 +159,7 @@ export default {
     WeeklyContribution: 'ผลงานรายสัปดาห์',
     Joined: 'เข้าร่วม',
     BottomLineText: 'ถึงที่สุดแล้ว~',
+    AssetsTip: 'อัตราค่าธรรมเนียม',
   },
   bindingInviter: {
     MyInviter: 'เชิญโดย',

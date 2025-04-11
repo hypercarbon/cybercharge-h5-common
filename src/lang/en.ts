@@ -159,6 +159,7 @@ export default {
     WeeklyContribution: 'Weekly Contribution',
     Joined: 'Joined',
     BottomLineText: "You've reached the end!~",
+    AssetsTip: 'Micro and small GEM mines do not share profits.',
   },
   bindingInviter: {
     MyInviter: 'Invited by',

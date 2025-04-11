@@ -158,6 +158,7 @@ export default {
     WeeklyContribution: '주간 기여',
     Joined: '가입',
     BottomLineText: '여기가 끝이에요~',
+    AssetsTip: '마이크로 및 소규모 GEM 광산은 이익을 공유하지 않습니다.',
   },
   bindingInviter: {
     MyInviter: '내 초대인',

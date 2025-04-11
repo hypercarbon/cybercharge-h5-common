@@ -157,6 +157,7 @@ export default {
     WeeklyContribution: '週貢獻',
     Joined: '加入',
     BottomLineText: '已經到頂囉～',
+    AssetsTip: 'Micro and small GEM mines do not share profits.',
   },
   bindingInviter: {
     MyInviter: '我的邀請人',

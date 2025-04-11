@@ -4,6 +4,7 @@
       <div class="assets-title">
         <img :src="GemImg" alt="" />
         <span class="assets-value">GEM</span>
+        <span class="assets-tip">{{ t('inviteAdmin.AssetsTip') }} </span>
       </div>
       <div class="assets-th assets-row">
         <span class="assets-col">{{ t('inviteAdmin.TotalEarnings') }}</span>
@@ -85,7 +86,12 @@ defineProps<{
       }
       .assets-value {
         font-weight: 700;
-        font-size: 14px;
+        font-size: 15px;
+      }
+      .assets-tip {
+        font-size: 12px;
+        margin-left: 4px;
+        color: #666;
       }
     }
     .assets-row {

@@ -159,6 +159,7 @@ export default {
     WeeklyContribution: '週間貢献',
     Joined: '参加',
     BottomLineText: 'ここが最下部です～',
+    AssetsTip: '小規模ミクロ＆小規模ミクロは手数料を配信していません。',
   },
   bindingInviter: {
     MyInviter: '招待者',

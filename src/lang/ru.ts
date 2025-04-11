@@ -160,6 +160,7 @@ export default {
     WeeklyContribution: 'Недельный вклад',
     Joined: 'Вступление',
     BottomLineText: 'Это конец!~',
+    AssetsTip: 'Микро и малые GEM шахты не делят прибыль.',
   },
   bindingInviter: {
     MyInviter: 'Мой пригласитель',

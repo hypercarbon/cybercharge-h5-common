@@ -158,6 +158,7 @@ export default {
     WeeklyContribution: 'Đóng góp tuần',
     Joined: 'Tham gia',
     BottomLineText: 'Đến giới hạn rồi~',
+    AssetsTip: 'Tỷ lệ hoa hồng',
   },
   bindingInviter: {
     MyInviter: 'Người mời của tôi',
