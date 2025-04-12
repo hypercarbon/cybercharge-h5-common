@@ -172,5 +172,10 @@ export default {
     PleaseEnterInviteCode: 'ป้อนรหัสเชิญ',
     PleaseEnterCorrectUserId: 'ป้อนรหัสเชิญที่ถูกต้อง',
     Details: 'รายละเอียด',
+    Confirm: 'ยืนยัน',
+    Cancel: 'ยกเลิก',
+    ConfirmBindHeader: 'ยืนยันการเชื่อมต่อ',
+    ConfirmBindSuccess: 'ยืนยันการเชื่อมต่อสำเร็จ',
+    ConfirmBindFailed: 'ยืนยันการเชื่อมต่อไม่สำเร็จ',
   },
 }

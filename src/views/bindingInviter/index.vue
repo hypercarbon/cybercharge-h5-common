@@ -47,10 +47,32 @@
           }"
           @click="handleBindInviter"
         >
+          <van-loading
+            v-if="findUserLoading"
+            class="icon-loading"
+            size="20px"
+            :color="channel === '1' ? '#000' : '#fff'"
+          />
           {{ t('bindingInviter.BindNow') }}
         </button>
       </template>
     </div>
+
+    <ConfirmDialog
+      v-if="showConfirmDialog"
+      @close="showConfirmDialog = false"
+      @confirm="handleConfirm"
+    >
+      <div class="dialog-content">
+        <img
+          :src="userInfoById?.avatar || defaultAvatar"
+          alt="avatar"
+          class="dialog-avatar"
+        />
+        <div class="dialog-title">{{ userInfoById?.username }}</div>
+        <div class="dialog-desc">ID: {{ userInfoById?.user_id }}</div>
+      </div>
+    </ConfirmDialog>
   </div>
 </template>
 
@@ -59,6 +81,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import CustomNavBar from './components/CustomNavBar.vue'
 import CustomInput from './components/CustomInput.vue'
+import ConfirmDialog from './components/ConfirmDialog.vue'
 import { showToast } from 'vant'
 import nativeEvent from '@/utils/nativeEvent'
 import { useUserInfoStore } from '@/stores/userInfo'
@@ -69,11 +92,14 @@ import {
   type UserInfo,
   type InviterInfo,
   getDetailsUrl,
+  getUserInfoById,
+  type UserInfoById,
 } from '@/services/bindingInviter'
 import bg1 from './images/1/bg.png'
 import bg2 from './images/2/bg.png'
 import btn1 from './images/1/btn_large.png'
 import btn2 from './images/2/btn_large.png'
+import defaultAvatar from './images/default-avatar.png'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
@@ -81,6 +107,8 @@ const { t } = useI18n()
 const route = useRoute()
 const userInfoStore = useUserInfoStore()
 const desc = ref(t('bindingInviter.Welcome'))
+const userInfoById = ref<UserInfoById>()
+const findUserLoading = ref(false)
 
 const backgroundImageMap: Record<string, string> = {
   '1': bg1,
@@ -102,6 +130,7 @@ const inputCode = ref('')
 const loading = ref(true)
 // 详情页地址
 const detailsUrl = ref('')
+const showConfirmDialog = ref(false)
 
 // 获取渠道参数
 const getChannelFromUrl = () => {
@@ -152,6 +181,10 @@ const handleBindInviter = async () => {
     return
   }
 
+  await _getUserInfoById()
+}
+
+const handleConfirm = async () => {
   await _bindChannelInviter()
 }
 
@@ -213,6 +246,20 @@ const _getInviterInfo = async () => {
   }
 }
 
+const _getUserInfoById = async () => {
+  try {
+    findUserLoading.value = true
+    const res = await getUserInfoById(inputCode.value)
+
+    userInfoById.value = res.data
+    showConfirmDialog.value = true
+  } catch (error) {
+    showToast(error.msg)
+  } finally {
+    findUserLoading.value = false
+  }
+}
+
 const _bindChannelInviter = async () => {
   try {
     const res = await bindChannelInviter({
@@ -220,8 +267,9 @@ const _bindChannelInviter = async () => {
       inviter_id: inputCode.value,
     })
     if (res.code === 0) {
-      showToast('绑定成功')
       _getInviterInfo()
+      showToast(t('bindingInviter.ConfirmBindSuccess'))
+      showConfirmDialog.value = false
     }
   } catch (error) {
     console.log('errData', error)
@@ -274,6 +322,9 @@ const _getDetailsUrl = async () => {
 }
 
 .bind-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   height: 48px;
   background-size: 100% 100%;
@@ -358,5 +409,37 @@ const _getDetailsUrl = async () => {
   100% {
     background-position: -200% 0;
   }
+}
+
+.dialog-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.dialog-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 2px solid #666;
+}
+
+.dialog-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.dialog-desc {
+  font-size: 14px;
+  color: #666;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.icon-loading {
+  margin-right: 8px;
 }
 </style>

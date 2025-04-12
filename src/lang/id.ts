@@ -171,5 +171,10 @@ export default {
     PleaseEnterInviteCode: 'Masukkan kode undangan',
     PleaseEnterCorrectUserId: 'Masukkan kode undangan yang benar',
     Details: 'Detail',
+    Confirm: 'Konfirmasi',
+    Cancel: 'Batalkan',
+    ConfirmBindHeader: 'Konfirmasi Bind',
+    ConfirmBindSuccess: 'Bind Berhasil',
+    ConfirmBindFailed: 'Bind Gagal',
   },
 }

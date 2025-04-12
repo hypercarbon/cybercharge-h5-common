@@ -172,5 +172,10 @@ export default {
     PleaseEnterInviteCode: '招待コードを入力してください',
     PleaseEnterCorrectUserId: '招待コードが正しいか確認してください',
     Details: '詳細',
+    Confirm: '確認',
+    Cancel: 'キャンセル',
+    ConfirmBindHeader: 'バインド確認',
+    ConfirmBindSuccess: 'バインド成功',
+    ConfirmBindFailed: 'バインド失敗',
   },
 }

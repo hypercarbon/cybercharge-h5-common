@@ -171,5 +171,10 @@ export default {
     PleaseEnterInviteCode: '초대 코드 입력',
     PleaseEnterCorrectUserId: '초대 코드가 올바른지 확인해주세요',
     Details: '상세',
+    Confirm: '확인',
+    Cancel: '취소',
+    ConfirmBindHeader: '바인드 확인',
+    ConfirmBindSuccess: '바인드 성공',
+    ConfirmBindFailed: '바인드 실패',
   },
 }

@@ -171,5 +171,10 @@ export default {
     PleaseEnterInviteCode: 'Nhập mã mời',
     PleaseEnterCorrectUserId: 'Nhập mã mời đúng',
     Details: 'Chi tiết',
+    Confirm: 'Xác nhận',
+    Cancel: 'Hủy bỏ',
+    ConfirmBindHeader: 'Xác nhận kết nối',
+    ConfirmBindSuccess: 'Kết nối thành công',
+    ConfirmBindFailed: 'Kết nối thất bại',
   },
 }

@@ -172,5 +172,10 @@ export default {
     PleaseEnterInviteCode: 'Introduce código',
     PleaseEnterCorrectUserId: 'Introduce código correcto',
     Details: 'Detalles',
+    Confirm: 'Confirmar',
+    Cancel: 'Cancelar',
+    ConfirmBindHeader: 'Confirmar enlace',
+    ConfirmBindSuccess: 'Enlace confirmado',
+    ConfirmBindFailed: 'Enlace no confirmado',
   },
 }

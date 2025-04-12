@@ -57,6 +57,12 @@ export type UserInfo = {
   isSetPassword: boolean
 }
 
+export type UserInfoById = {
+  avatar: string
+  user_id: number
+  username: string
+}
+
 export type ChannelDetails = {
   channelCode: string
   channelId: number
@@ -121,3 +127,6 @@ export const getDetailsUrl = (
       channelId,
     },
   })
+
+export const getUserInfoById = (id: string): Promise<Result<UserInfoById>> =>
+  axiosInstance.post('/api/agent/purchase/findUser', { to_user_id: id })
