@@ -26,7 +26,7 @@
         <div class="info-content" v-if="inviterInfo">
           <img :src="userInfoById?.avatar || defaultAvatar" alt="avatar" />
           <p class="inviter-name">{{ userInfoById?.username }}</p>
-          <div class="desc">{{ desc }}</div>
+          <!-- <div class="desc">{{ desc }}</div> -->
         </div>
         <CustomInput
           v-model="inputCode"
