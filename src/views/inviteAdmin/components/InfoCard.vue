@@ -27,21 +27,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import GemImg from '../images/img_assets.png'
 import ShadowImg from '../images/assets_bg_shadow.png'
 import Skeleton from './Skeleton.vue'
 import type { RewardDetail } from '@/services/bindingInviter'
+import { formatAmount } from '@/utils/utils'
 const { t } = useI18n()
-
-const formatAmount = (amount: number) => {
-  if (!amount) return '0'
-  const str = amount.toString()
-  const dotIndex = str.indexOf('.')
-  if (dotIndex === -1) return str
-  return str.slice(0, dotIndex + 7) // 保留小数点后6位
-}
 
 defineProps<{
   rewardDetail: RewardDetail | undefined

@@ -24,7 +24,8 @@
       <!-- 实际内容 -->
       <template v-else>
         <div class="info-content" v-if="inviterInfo">
-          <img src="./images/default-avatar.png" alt="avatar" />
+          <img :src="userInfoById?.avatar || defaultAvatar" alt="avatar" />
+          <p class="inviter-name">{{ userInfoById?.username }}</p>
           <div class="desc">{{ desc }}</div>
         </div>
         <CustomInput
@@ -101,6 +102,7 @@ import btn1 from './images/1/btn_large.png'
 import btn2 from './images/2/btn_large.png'
 import defaultAvatar from './images/default-avatar.png'
 import { useI18n } from 'vue-i18n'
+import type { ApiError } from '@/types/utils'
 
 const { t } = useI18n()
 
@@ -180,8 +182,7 @@ const handleBindInviter = async () => {
     showToast(t('bindingInviter.PleaseEnterCorrectUserId'))
     return
   }
-
-  await _getUserInfoById()
+  await _getUserInfoById(true)
 }
 
 const handleConfirm = async () => {
@@ -214,8 +215,15 @@ onMounted(async () => {
     _getDetailsUrl() // 获取详情页地址
     await _getUserInfo() // 用户信息
     await _getInviterInfo() // 邀请人信息
-  } catch (error) {
-    console.error('加载数据失败:', error)
+    if (inviterInfo.value) {
+      await _getUserInfoById(false) // 获取详细邀请信息
+    }
+  } catch (error: unknown) {
+    if (error && typeof error === 'object' && 'msg' in error) {
+      showToast((error as ApiError).msg)
+    } else {
+      console.error('未知错误:', error)
+    }
   } finally {
     loading.value = false
   }
@@ -246,15 +254,22 @@ const _getInviterInfo = async () => {
   }
 }
 
-const _getUserInfoById = async () => {
+// 根据用户ID获取用户信息
+const _getUserInfoById = async (ifBinding = false) => {
   try {
     findUserLoading.value = true
     const res = await getUserInfoById(inputCode.value)
 
     userInfoById.value = res.data
-    showConfirmDialog.value = true
-  } catch (error) {
-    showToast(error.msg)
+    if (ifBinding) {
+      showConfirmDialog.value = true
+    }
+  } catch (error: unknown) {
+    if (error && typeof error === 'object' && 'msg' in error) {
+      showToast((error as ApiError).msg)
+    } else {
+      console.error('未知错误:', error)
+    }
   } finally {
     findUserLoading.value = false
   }
@@ -271,9 +286,13 @@ const _bindChannelInviter = async () => {
       showToast(t('bindingInviter.ConfirmBindSuccess'))
       showConfirmDialog.value = false
     }
-  } catch (error) {
-    console.log('errData', error)
-    showToast(error.msg)
+  } catch (error: unknown) {
+    if (error && typeof error === 'object' && 'msg' in error) {
+      console.log('errData', error)
+      showToast((error as ApiError).msg)
+    } else {
+      console.error('未知错误:', error)
+    }
   }
 }
 
@@ -305,20 +324,38 @@ const _getDetailsUrl = async () => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-}
+  width: 100%;
 
-.info-content img {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
+  img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 2px solid #e8e8e840;
+  }
+
+  .inviter-name {
+    margin-top: 12px;
+    font-size: 20px;
+    color: #fff;
+    text-align: center;
+    font-weight: 700;
+    max-width: 100%;
+    word-break: break-all;
+    white-space: normal;
+    overflow-wrap: break-word;
+  }
 }
 
 .desc {
-  margin-top: 14px;
+  margin-top: 12px;
   font-size: 12px;
   color: rgba(255, 255, 255, 0.6);
   line-height: 18px;
   text-align: center;
+  max-width: 100%;
+  word-break: break-all;
+  white-space: normal;
+  overflow-wrap: break-word;
 }
 
 .bind-button {
