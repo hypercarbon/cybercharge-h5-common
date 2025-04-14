@@ -6,6 +6,7 @@ import i18n from '@/lang/i18n'
 import { errValidateHandler } from './errorCodeHandler'
 import { showFailToast, showToast } from 'vant'
 import nativeEvent, { ToastType } from './nativeEvent'
+import type { ApiError } from '@/types/utils'
 
 // const message = useMessage()
 
@@ -57,7 +58,7 @@ instance.interceptors.response.use(
 
     return response.data
   },
-  error => {
+  (error: unknown) => {
     // showFailToast(t('errCode.commonErr'))
     // http 错误码处理 error.response && error.response.status
     nativeEvent.showToast({

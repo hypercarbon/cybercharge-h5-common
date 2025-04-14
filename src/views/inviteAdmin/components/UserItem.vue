@@ -2,8 +2,8 @@
   <li class="user-item">
     <img class="avatar" :src="user.user.avatar || UserAvatar" alt="" />
     <div class="user-info-card">
-      <p class="name">{{ user.userId }}</p>
-      <p class="id">ID:{{ user.userId }}</p>
+      <p class="name">{{ user.user.username }}</p>
+      <p class="id">ID:{{ user.user.id }}</p>
 
       <div class="assets-row">
         <span class="assets-label">{{

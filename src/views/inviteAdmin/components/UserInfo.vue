@@ -46,6 +46,10 @@ defineProps<{
       color: #fff;
       font-size: 16px;
       font-weight: 700;
+      max-width: 100%;
+      word-break: break-all;
+      white-space: normal;
+      overflow-wrap: break-word;
     }
     .user-id {
       color: rgba(255, 255, 255, 0.7);
