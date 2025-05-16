@@ -8,7 +8,18 @@
   >
     <path
       d="M14.052 4L17 4L8.94801 12.0117L16.9764 20H14.0284L6 12.0117L14.052 4Z"
-      fill="white"
+      :fill="color"
     />
   </svg>
 </template>
+
+<script setup lang="ts">
+withDefaults(
+  defineProps<{
+    color?: string
+  }>(),
+  {
+    color: '#000',
+  },
+)
+</script>

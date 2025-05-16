@@ -2,11 +2,12 @@
   <div
     class="binding-inviter-page"
     :style="{
-      backgroundImage: `url(${backgroundImage})`,
+      background: backgroundImage,
       paddingTop: userInfoStore.safeTop + 'px',
     }"
   >
     <CustomNavBar
+      :theme="navBarTheme"
       @back="handleBack"
       :title="t('bindingInviter.MyInviter')"
       :extra="t('bindingInviter.Details')"
@@ -35,7 +36,6 @@
           :channel="channel"
           :show-clear-button="true"
           :show-copy-button="inviterInfo !== null"
-          background-color="rgba(0, 0, 0, 0.25)"
           @keyup.enter="handleBindInviter"
         />
 
@@ -43,8 +43,8 @@
           v-if="!inviterInfo"
           class="bind-button"
           :style="{
-            backgroundImage: `url(${bindButtonImage})`,
-            color: channel === '1' ? '#000' : '#fff',
+            background: bindButtonImage,
+            color: bindBtnTextColorMap[channel],
           }"
           @click="handleBindInviter"
         >
@@ -52,7 +52,7 @@
             v-if="findUserLoading"
             class="icon-loading"
             size="20px"
-            :color="channel === '1' ? '#000' : '#fff'"
+            :color="bindBtnTextColorMap[channel]"
           />
           {{ t('bindingInviter.BindNow') }}
         </button>
@@ -81,7 +81,8 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import CustomNavBar from './components/CustomNavBar.vue'
-import CustomInput from './components/CustomInput.vue'
+// import CustomInput from './components/CustomInput.vue'
+import CustomInput from './components/CustomInputUI.vue'
 import ConfirmDialog from './components/ConfirmDialog.vue'
 import { showToast } from 'vant'
 import nativeEvent from '@/utils/nativeEvent'
@@ -108,18 +109,32 @@ const { t } = useI18n()
 
 const route = useRoute()
 const userInfoStore = useUserInfoStore()
-const desc = ref(t('bindingInviter.Welcome'))
+// const desc = ref(t('bindingInviter.Welcome'))
 const userInfoById = ref<UserInfoById>()
 const findUserLoading = ref(false)
 
+const navBarThemeMap = {
+  '1': 'white',
+  '2': 'white',
+  '3': 'black',
+}
+
 const backgroundImageMap: Record<string, string> = {
-  '1': bg1,
-  '2': bg2,
+  '1': `url(${bg1})`,
+  '2': `url(${bg2})`,
+  '3': '#fff',
 }
 
 const btnImageMap: Record<string, string> = {
-  '1': btn1,
-  '2': btn2,
+  '1': `url(${btn1})`,
+  '2': `url(${btn2})`,
+  '3': '#000',
+}
+
+const bindBtnTextColorMap: Record<string, string> = {
+  '1': '#000',
+  '2': '#fff',
+  '3': '#1AFF62',
 }
 
 // 渠道相关
@@ -188,6 +203,14 @@ const handleBindInviter = async () => {
 const handleConfirm = async () => {
   await _bindChannelInviter()
 }
+
+const navBarTheme = computed(() => {
+  if (channel.value) {
+    return navBarThemeMap[channel.value]
+  } else {
+    return navBarThemeMap['1']
+  }
+})
 
 // 背景图片计算属性
 const backgroundImage = computed(() => {
@@ -372,6 +395,7 @@ const _getDetailsUrl = async () => {
   color: #000;
   font-size: 16px;
   font-weight: 600;
+  border-radius: 4px;
 }
 
 /* 骨架屏样式 */
