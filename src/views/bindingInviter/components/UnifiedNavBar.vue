@@ -1,14 +1,19 @@
 <template>
   <div :class="['customNavBar']">
     <div class="customNavBarBackBtn" @click="handleBack">
-      <BackIcon :color="theme === 'black' ? '#000' : '#fff'" class="backIcon" />
+      <BackIcon :color="navBarConfig.backIconColor" class="backIcon" />
     </div>
-    <span
-      class="title"
-      :style="{ color: theme === 'black' ? '#000' : '#fff' }"
-      >{{ title }}</span
+    <span class="title" :style="{ color: navBarConfig.titleColor }">{{
+      title
+    }}</span>
+    <div
+      v-if="extra"
+      :style="{
+        color: navBarConfig.extraColor,
+      }"
+      class="extra-button"
+      @click="handleExtraClick"
     >
-    <div v-if="extra" class="extra-button" @click="handleExtraClick">
       {{ extra }}
     </div>
   </div>
@@ -16,12 +21,19 @@
 
 <script setup lang="ts">
 import BackIcon from '../Icon/icon_back.vue'
+import type { ChannelType } from '../type/channel'
+import { computed } from 'vue'
+import { getThemeConfig } from '../model/theme'
 
-defineProps<{
+const props = defineProps<{
   title: string
   extra?: string
-  theme?: 'black' | 'white'
+  channel?: ChannelType
 }>()
+
+const navBarConfig = computed(() => {
+  return getThemeConfig(props.channel || '1').navBar
+})
 
 const emit = defineEmits<{
   (e: 'back'): void
@@ -67,7 +79,6 @@ const handleExtraClick = () => {
     right: 26px;
     top: 50%;
     transform: translateY(-50%);
-    color: rgba(255, 255, 255, 0.7);
     font-size: 15px;
   }
 }

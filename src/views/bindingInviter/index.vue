@@ -1,13 +1,7 @@
 <template>
-  <div
-    class="binding-inviter-page"
-    :style="{
-      background: backgroundImage,
-      paddingTop: userInfoStore.safeTop + 'px',
-    }"
-  >
-    <CustomNavBar
-      :theme="navBarTheme"
+  <div class="binding-inviter-page" :style="backgroundStyle">
+    <UnifiedNavBar
+      :channel="channel"
       @back="handleBack"
       :title="t('bindingInviter.MyInviter')"
       :extra="t('bindingInviter.Details')"
@@ -15,21 +9,16 @@
     />
     <div class="binding-inviter-content">
       <!-- 骨架屏 -->
-      <div v-if="loading" class="skeleton-container">
-        <div class="skeleton-avatar"></div>
-        <div class="skeleton-desc"></div>
-        <div class="skeleton-input"></div>
-        <div class="skeleton-button"></div>
-      </div>
+      <UnifiedSkeleton v-if="loading" :channel="channel" />
 
       <!-- 实际内容 -->
       <template v-else>
-        <div class="info-content" v-if="inviterInfo">
-          <img :src="userInfoById?.avatar || defaultAvatar" alt="avatar" />
-          <p class="inviter-name">{{ userInfoById?.username }}</p>
-          <!-- <div class="desc">{{ desc }}</div> -->
-        </div>
-        <CustomInput
+        <UnifiedInfoContent
+          v-if="inviterInfo"
+          :user-info="userInfoById"
+          :channel="channel"
+        />
+        <UnifiedInput
           v-model="inputCode"
           :placeholder="t('bindingInviter.Placeholder')"
           :disabled="inviterInfo !== null || !userInfo"
@@ -39,23 +28,15 @@
           @keyup.enter="handleBindInviter"
         />
 
-        <button
+        <UnifiedButton
+          style="margin-top: 24px"
           v-if="!inviterInfo"
-          class="bind-button"
-          :style="{
-            background: bindButtonImage,
-            color: bindBtnTextColorMap[channel],
-          }"
+          :channel="channel"
+          :loading="findUserLoading"
           @click="handleBindInviter"
         >
-          <van-loading
-            v-if="findUserLoading"
-            class="icon-loading"
-            size="20px"
-            :color="bindBtnTextColorMap[channel]"
-          />
           {{ t('bindingInviter.BindNow') }}
-        </button>
+        </UnifiedButton>
       </template>
     </div>
 
@@ -80,9 +61,11 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import CustomNavBar from './components/CustomNavBar.vue'
-// import CustomInput from './components/CustomInput.vue'
-import CustomInput from './components/CustomInputUI.vue'
+import UnifiedNavBar from './components/UnifiedNavBar.vue'
+import UnifiedInput from './components/UnifiedInput.vue'
+import UnifiedButton from './components/UnifiedButton.vue'
+import UnifiedSkeleton from './components/UnifiedSkeleton.vue'
+import UnifiedInfoContent from './components/UnifiedInfoContent.vue'
 import ConfirmDialog from './components/ConfirmDialog.vue'
 import { showToast } from 'vant'
 import nativeEvent from '@/utils/nativeEvent'
@@ -97,13 +80,14 @@ import {
   getUserInfoById,
   type UserInfoById,
 } from '@/services/bindingInviter'
-import bg1 from './images/1/bg.png'
-import bg2 from './images/2/bg.png'
-import btn1 from './images/1/btn_large.png'
-import btn2 from './images/2/btn_large.png'
 import defaultAvatar from './images/default-avatar.png'
 import { useI18n } from 'vue-i18n'
-import type { ApiError } from '@/types/utils'
+import type { ChannelType } from './type/channel'
+import { getThemeConfig } from './model/theme'
+
+type ApiError = {
+  msg: string
+}
 
 const { t } = useI18n()
 
@@ -113,32 +97,18 @@ const userInfoStore = useUserInfoStore()
 const userInfoById = ref<UserInfoById>()
 const findUserLoading = ref(false)
 
-const navBarThemeMap = {
-  '1': 'white',
-  '2': 'white',
-  '3': 'black',
-}
-
-const backgroundImageMap: Record<string, string> = {
-  '1': `url(${bg1})`,
-  '2': `url(${bg2})`,
-  '3': '#fff',
-}
-
-const btnImageMap: Record<string, string> = {
-  '1': `url(${btn1})`,
-  '2': `url(${btn2})`,
-  '3': '#000',
-}
-
-const bindBtnTextColorMap: Record<string, string> = {
-  '1': '#000',
-  '2': '#fff',
-  '3': '#1AFF62',
-}
+// 背景样式计算属性
+const backgroundStyle = computed(() => {
+  const config = getThemeConfig(channel.value).pageBackground
+  return {
+    backgroundImage: config.backgroundImage,
+    backgroundColor: config.backgroundColor,
+    paddingTop: userInfoStore.safeTop + 'px',
+  }
+})
 
 // 渠道相关
-const channel = ref('')
+const channel = ref<ChannelType>('1')
 const userInfo = ref<UserInfo>()
 const inviterInfo = ref<InviterInfo>(null)
 // 邀请码相关
@@ -152,7 +122,7 @@ const showConfirmDialog = ref(false)
 // 获取渠道参数
 const getChannelFromUrl = () => {
   // 优先从路由参数获取
-  const routeChannel = route.query.channelId as string
+  const routeChannel = route.query.channelId as ChannelType
   // console.log('routeChannel', routeChannel)
   if (routeChannel) {
     // 如果channelId是数组，取第一个值
@@ -162,7 +132,7 @@ const getChannelFromUrl = () => {
 
   // 从URL参数获取
   const urlParams = new URLSearchParams(window.location.search)
-  const urlChannel = urlParams.get('channelId')
+  const urlChannel = urlParams.get('channelId') as ChannelType
   if (urlChannel) {
     channel.value = urlChannel
   } else {
@@ -203,33 +173,6 @@ const handleBindInviter = async () => {
 const handleConfirm = async () => {
   await _bindChannelInviter()
 }
-
-const navBarTheme = computed(() => {
-  if (channel.value) {
-    return navBarThemeMap[channel.value]
-  } else {
-    return navBarThemeMap['1']
-  }
-})
-
-// 背景图片计算属性
-const backgroundImage = computed(() => {
-  let bgImage = ''
-  if (channel.value) {
-    bgImage = backgroundImageMap[channel.value]
-  } else {
-    bgImage = backgroundImageMap['1']
-  }
-  return bgImage
-})
-
-const bindButtonImage = computed(() => {
-  if (channel.value) {
-    return btnImageMap[channel.value]
-  } else {
-    return btnImageMap['1']
-  }
-})
 
 onMounted(async () => {
   try {
@@ -341,34 +284,6 @@ const _getDetailsUrl = async () => {
   padding: 0 24px;
 }
 
-.info-content {
-  margin-bottom: 40px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-
-  img {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    border: 2px solid #e8e8e840;
-  }
-
-  .inviter-name {
-    margin-top: 12px;
-    font-size: 20px;
-    color: #fff;
-    text-align: center;
-    font-weight: 700;
-    max-width: 100%;
-    word-break: break-all;
-    white-space: normal;
-    overflow-wrap: break-word;
-  }
-}
-
 .desc {
   margin-top: 12px;
   font-size: 12px;
@@ -379,97 +294,6 @@ const _getDetailsUrl = async () => {
   word-break: break-all;
   white-space: normal;
   overflow-wrap: break-word;
-}
-
-.bind-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 48px;
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  border: none;
-  margin-top: 24px;
-  background-color: transparent;
-  color: #000;
-  font-size: 16px;
-  font-weight: 600;
-  border-radius: 4px;
-}
-
-/* 骨架屏样式 */
-.skeleton-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 24px;
-  padding: 0 24px;
-}
-
-.skeleton-avatar {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.1) 25%,
-    rgba(255, 255, 255, 0.2) 50%,
-    rgba(255, 255, 255, 0.1) 75%
-  );
-  background-size: 200% 100%;
-  animation: skeleton-loading 1.5s infinite;
-}
-
-.skeleton-desc {
-  width: 200px;
-  height: 18px;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.1) 25%,
-    rgba(255, 255, 255, 0.2) 50%,
-    rgba(255, 255, 255, 0.1) 75%
-  );
-  background-size: 200% 100%;
-  animation: skeleton-loading 1.5s infinite;
-  border-radius: 4px;
-}
-
-.skeleton-input {
-  width: 100%;
-  height: 48px;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.1) 25%,
-    rgba(255, 255, 255, 0.2) 50%,
-    rgba(255, 255, 255, 0.1) 75%
-  );
-  background-size: 200% 100%;
-  animation: skeleton-loading 1.5s infinite;
-  border-radius: 8px;
-}
-
-.skeleton-button {
-  width: 100%;
-  height: 48px;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.1) 25%,
-    rgba(255, 255, 255, 0.2) 50%,
-    rgba(255, 255, 255, 0.1) 75%
-  );
-  background-size: 200% 100%;
-  animation: skeleton-loading 1.5s infinite;
-  border-radius: 8px;
-}
-
-@keyframes skeleton-loading {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
 }
 
 .dialog-content {
@@ -498,9 +322,5 @@ const _getDetailsUrl = async () => {
   color: #666;
   text-align: center;
   line-height: 1.5;
-}
-
-.icon-loading {
-  margin-right: 8px;
 }
 </style>

@@ -1,24 +1,21 @@
 <template>
-  <div
-    class="custom-input"
-    :style="{ backgroundImage: `url(${backgroundImage})` }"
-  >
-    <img :src="icon" class="left-icon" alt="" />
-    <div class="input-wrapper">
+  <div class="unified-input" :class="inputClass" :style="inputStyle">
+    <img v-if="showIcon" :src="currentConfig.icon" class="left-icon" alt="" />
+    <div class="input-wrapper" :class="wrapperClass">
       <input
         :value="modelValue"
         @input="handleInput"
         :placeholder="placeholder"
         class="input-field"
         :disabled="disabled"
+        :class="inputFieldClass"
+        :style="inputFieldStyle"
       />
       <button
         v-if="showCopyButton"
         class="copy-button"
-        :style="{
-          backgroundImage: `url(${bindButtonImage})`,
-          color: channel === '1' ? '#000' : '#fff',
-        }"
+        :class="copyButtonClass"
+        :style="copyButtonStyle"
         size="small"
         @click="handleCopy"
       >
@@ -39,12 +36,8 @@
 import { useI18n } from 'vue-i18n'
 import { showToast } from 'vant'
 import { computed } from 'vue'
-import icon1 from '../images/1/icon_game.png'
-import icon2 from '../images/2/icon_game.png'
-import bg1 from '../images/1/input_bg.png'
-import bg2 from '../images/2/input_bg.png'
-import btn1 from '../images/1/btn_small.png'
-import btn2 from '../images/2/btn_small.png'
+import type { ChannelType } from '../type/channel'
+import { getThemeConfig } from '../model/theme'
 
 const { t } = useI18n()
 
@@ -54,7 +47,7 @@ const props = defineProps({
     default: '',
   },
   channel: {
-    type: String,
+    type: String as () => ChannelType,
     default: '1',
   },
   placeholder: {
@@ -71,40 +64,59 @@ const props = defineProps({
   },
 })
 
-const iconMap: Record<string, string> = {
-  '1': icon1,
-  '2': icon2,
-}
+// 获取当前渠道配置
+const currentConfig = computed(() => getThemeConfig(props.channel).input)
 
-const bgMap: Record<string, string> = {
-  '1': bg1,
-  '2': bg2,
-}
+// 计算属性
+const showIcon = computed(() => currentConfig.value.showIcon)
 
-const btnMap: Record<string, string> = {
-  '1': btn1,
-  '2': btn2,
-}
+// 样式计算属性
+const inputClass = computed(() => ({
+  'unified-input': true,
+  'custom-style': props.channel === '3',
+}))
 
-const icon = computed(() => {
-  if (props.channel) {
-    return iconMap[props.channel]
+const inputStyle = computed(() => {
+  const config = currentConfig.value
+  return {
+    backgroundImage: config.backgroundImage
+      ? `url(${config.backgroundImage})`
+      : 'none',
+    backgroundColor: config.backgroundColor,
   }
-  return icon1
 })
 
-const backgroundImage = computed(() => {
-  if (props.channel) {
-    return bgMap[props.channel]
-  }
-  return bg1
-})
+const wrapperClass = computed(() => ({
+  'input-wrapper': true,
+  'custom-style': props.channel === '3',
+}))
 
-const bindButtonImage = computed(() => {
-  if (props.channel) {
-    return btnMap[props.channel]
-  }
-  return btn1
+const inputFieldClass = computed(() => ({
+  'input-field': true,
+  'custom-style': props.channel === '3',
+}))
+
+const inputFieldStyle = computed(() => ({
+  color: currentConfig.value.textColor,
+  '--placeholder-color': currentConfig.value.placeholderColor,
+}))
+
+const copyButtonClass = computed(() => ({
+  'copy-button': true,
+  'custom-style': props.channel === '3',
+}))
+
+const copyButtonStyle = computed(() => {
+  const config = currentConfig.value.copyButton
+  return props.channel === '3'
+    ? {
+        backgroundColor: config.backgroundColor,
+        color: config.textColor,
+      }
+    : {
+        backgroundImage: `url(${config.backgroundImage})`,
+        color: config.textColor,
+      }
 })
 
 const emit = defineEmits(['update:modelValue'])
@@ -167,7 +179,7 @@ const handleCopy = async () => {
 </script>
 
 <style scoped>
-.custom-input {
+.unified-input {
   width: 100%;
   padding-left: 12px;
   height: 56px;
@@ -177,6 +189,11 @@ const handleCopy = async () => {
   position: relative;
   background-size: 100% 100%;
   background-repeat: no-repeat;
+}
+
+.unified-input.custom-style {
+  padding-left: 0;
+  background: none;
 }
 
 .left-icon {
@@ -194,28 +211,24 @@ const handleCopy = async () => {
   padding: 0 12px;
 }
 
+.input-wrapper.custom-style {
+  border: 1px solid var(--border-color, #000);
+  border-radius: 4px;
+  background-color: #f5f5f5;
+}
+
 .input-field {
   width: 100%;
   height: 100%;
   background-color: transparent;
   border: none;
   outline: none;
-  color: #fff;
   font-size: 14px;
   padding: 0;
 }
 
 .input-field::placeholder {
-  color: var(--secondary-text-color, rgba(255, 255, 255, 0.3));
-}
-
-.right-buttons {
-  display: flex;
-  gap: 8px;
-}
-
-.clear-icon {
-  font-size: 16px;
+  color: var(--placeholder-color);
 }
 
 .copy-button {
@@ -225,20 +238,19 @@ const handleCopy = async () => {
   background-repeat: no-repeat;
   border: none;
   background-color: transparent;
-  color: #000;
   font-size: 12px;
   font-weight: 700;
 }
 
-.action-button {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  background-color: transparent;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  z-index: 1;
+.copy-button.custom-style {
+  width: 50px;
+  height: 28px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 2px;
+}
+
+.clear-icon {
+  font-size: 16px;
 }
 </style>
