@@ -10,7 +10,7 @@
       v-if="loading"
       class="loading-icon"
       :size="loadingSize"
-      :color="loadingColor"
+      :color="currentConfig.loadingColor"
     />
     <slot></slot>
   </button>
@@ -19,37 +19,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { ChannelType } from '../type/channel'
-import btn1 from '../images/1/btn_large.png'
-import btn2 from '../images/2/btn_large.png'
-
-// 定义按钮配置接口
-interface ButtonConfig {
-  backgroundImage?: string
-  backgroundColor: string
-  textColor: string
-  loadingColor: string
-}
-
-// 按钮配置映射
-const buttonConfigMap: Record<ChannelType, ButtonConfig> = {
-  '1': {
-    backgroundImage: btn1,
-    backgroundColor: 'transparent',
-    textColor: '#000',
-    loadingColor: '#000',
-  },
-  '2': {
-    backgroundImage: btn2,
-    backgroundColor: 'transparent',
-    textColor: '#fff',
-    loadingColor: '#fff',
-  },
-  '3': {
-    backgroundColor: '#000',
-    textColor: '#1AFF62',
-    loadingColor: '#1AFF62',
-  },
-}
+import { getThemeConfig } from '../model/theme'
 
 const props = defineProps({
   channel: {
@@ -73,7 +43,7 @@ const props = defineProps({
 const emit = defineEmits(['click'])
 
 // 获取当前渠道配置
-const currentConfig = computed(() => buttonConfigMap[props.channel])
+const currentConfig = computed(() => getThemeConfig(props.channel).button)
 
 // 样式计算属性
 const buttonClass = computed(() => ({
@@ -98,8 +68,6 @@ const buttonStyle = computed(() => {
     backgroundImage: `url(${config.backgroundImage})`,
   }
 })
-
-const loadingColor = computed(() => currentConfig.value.loadingColor)
 
 const handleClick = (event: MouseEvent) => {
   if (!props.disabled && !props.loading) {

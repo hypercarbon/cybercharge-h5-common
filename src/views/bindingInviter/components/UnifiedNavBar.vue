@@ -1,20 +1,15 @@
 <template>
   <div :class="['customNavBar']">
     <div class="customNavBarBackBtn" @click="handleBack">
-      <BackIcon
-        :color="navBarTheme === 'black' ? '#000' : '#fff'"
-        class="backIcon"
-      />
+      <BackIcon :color="navBarConfig.backIconColor" class="backIcon" />
     </div>
-    <span
-      class="title"
-      :style="{ color: navBarTheme === 'black' ? '#000' : '#fff' }"
-      >{{ title }}</span
-    >
+    <span class="title" :style="{ color: navBarConfig.titleColor }">{{
+      title
+    }}</span>
     <div
       v-if="extra"
       :style="{
-        color: navBarTheme === 'black' ? '#000' : 'rgba(255, 255, 255, 0.7)',
+        color: navBarConfig.extraColor,
       }"
       class="extra-button"
       @click="handleExtraClick"
@@ -28,26 +23,16 @@
 import BackIcon from '../Icon/icon_back.vue'
 import type { ChannelType } from '../type/channel'
 import { computed } from 'vue'
+import { getThemeConfig } from '../model/theme'
+
 const props = defineProps<{
   title: string
   extra?: string
   channel?: ChannelType
 }>()
 
-type NavBarTheme = 'black' | 'white'
-
-const navBarThemeMap: Record<ChannelType, NavBarTheme> = {
-  '1': 'white',
-  '2': 'white',
-  '3': 'black',
-}
-
-const navBarTheme = computed(() => {
-  if (props.channel) {
-    return navBarThemeMap[props.channel]
-  } else {
-    return navBarThemeMap['1']
-  }
+const navBarConfig = computed(() => {
+  return getThemeConfig(props.channel || '1').navBar
 })
 
 const emit = defineEmits<{
@@ -94,7 +79,6 @@ const handleExtraClick = () => {
     right: 26px;
     top: 50%;
     transform: translateY(-50%);
-
     font-size: 15px;
   }
 }

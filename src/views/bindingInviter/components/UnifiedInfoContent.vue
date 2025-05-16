@@ -1,6 +1,10 @@
 <template>
   <div class="info-content" :class="containerClass">
-    <img :src="userInfo?.avatar || defaultAvatar" alt="avatar" />
+    <img
+      :src="userInfo?.avatar || defaultAvatar"
+      alt="avatar"
+      :style="avatarStyle"
+    />
     <p class="inviter-name" :class="nameClass" :style="nameStyle">
       {{ userInfo?.username }}
     </p>
@@ -12,10 +16,7 @@ import { computed } from 'vue'
 import type { ChannelType } from '../type/channel'
 import type { UserInfoById } from '@/services/bindingInviter'
 import defaultAvatar from '../images/default-avatar.png'
-
-interface InfoConfig {
-  nameColor: string
-}
+import { getThemeConfig } from '../model/theme'
 
 const props = defineProps({
   userInfo: {
@@ -28,21 +29,8 @@ const props = defineProps({
   },
 })
 
-// 信息配置映射
-const infoConfigMap: Record<ChannelType, InfoConfig> = {
-  '1': {
-    nameColor: '#fff',
-  },
-  '2': {
-    nameColor: '#fff',
-  },
-  '3': {
-    nameColor: '#000',
-  },
-}
-
 // 获取当前渠道配置
-const currentConfig = computed(() => infoConfigMap[props.channel])
+const currentConfig = computed(() => getThemeConfig(props.channel).infoContent)
 
 // 容器类名
 const containerClass = computed(() => ({
@@ -60,6 +48,11 @@ const nameClass = computed(() => ({
 const nameStyle = computed(() => ({
   color: currentConfig.value.nameColor,
 }))
+
+// 头像样式
+const avatarStyle = computed(() => ({
+  borderColor: currentConfig.value.avatarBorderColor,
+}))
 </script>
 
 <style scoped>
@@ -76,7 +69,7 @@ const nameStyle = computed(() => ({
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  border: 2px solid #e8e8e840;
+  border: 2px solid;
 }
 
 .inviter-name {

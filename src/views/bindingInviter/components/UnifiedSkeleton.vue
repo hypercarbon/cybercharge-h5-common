@@ -14,36 +14,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { ChannelType } from '../type/channel'
-
-// 定义骨架屏配置接口
-interface SkeletonConfig {
-  backgroundColor: string
-  gradientStart: string
-  gradientMiddle: string
-  gradientEnd: string
-}
-
-// 骨架屏配置映射
-const skeletonConfigMap: Record<ChannelType, SkeletonConfig> = {
-  '1': {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    gradientStart: 'rgba(255, 255, 255, 0.1)',
-    gradientMiddle: 'rgba(255, 255, 255, 0.2)',
-    gradientEnd: 'rgba(255, 255, 255, 0.1)',
-  },
-  '2': {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    gradientStart: 'rgba(255, 255, 255, 0.1)',
-    gradientMiddle: 'rgba(255, 255, 255, 0.2)',
-    gradientEnd: 'rgba(255, 255, 255, 0.1)',
-  },
-  '3': {
-    backgroundColor: 'rgba(0, 0, 0, 0.1)',
-    gradientStart: 'rgba(0, 0, 0, 0.1)',
-    gradientMiddle: 'rgba(0, 0, 0, 0.2)',
-    gradientEnd: 'rgba(0, 0, 0, 0.1)',
-  },
-}
+import { getThemeConfig } from '../model/theme'
 
 const props = defineProps({
   channel: {
@@ -53,9 +24,9 @@ const props = defineProps({
 })
 
 // 获取当前渠道配置
-const currentConfig = computed(() => skeletonConfigMap[props.channel])
+const currentConfig = computed(() => getThemeConfig(props.channel).skeleton)
 
-// 样式计算属性
+// 容器类名
 const containerClass = computed(() => ({
   'skeleton-container': true,
   'custom-style': props.channel === '3',

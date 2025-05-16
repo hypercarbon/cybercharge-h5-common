@@ -1,6 +1,6 @@
 <template>
   <div class="unified-input" :class="inputClass" :style="inputStyle">
-    <img v-if="showIcon" :src="icon" class="left-icon" alt="" />
+    <img v-if="showIcon" :src="currentConfig.icon" class="left-icon" alt="" />
     <div class="input-wrapper" :class="wrapperClass">
       <input
         :value="modelValue"
@@ -9,6 +9,7 @@
         class="input-field"
         :disabled="disabled"
         :class="inputFieldClass"
+        :style="inputFieldStyle"
       />
       <button
         v-if="showCopyButton"
@@ -35,57 +36,10 @@
 import { useI18n } from 'vue-i18n'
 import { showToast } from 'vant'
 import { computed } from 'vue'
-import icon1 from '../images/1/icon_game.png'
-import icon2 from '../images/2/icon_game.png'
-import bg1 from '../images/1/input_bg.png'
-import bg2 from '../images/2/input_bg.png'
-import btn1 from '../images/1/btn_small.png'
-import btn2 from '../images/2/btn_small.png'
 import type { ChannelType } from '../type/channel'
+import { getThemeConfig } from '../model/theme'
 
 const { t } = useI18n()
-
-// 定义背景配置接口
-interface BackgroundConfig {
-  backgroundImage?: string
-  backgroundColor?: string
-  showIcon?: boolean
-}
-
-// 背景配置映射
-const backgroundConfigMap: Record<ChannelType, BackgroundConfig> = {
-  '1': {
-    backgroundImage: bg1,
-    showIcon: true,
-  },
-  '2': {
-    backgroundImage: bg2,
-    showIcon: true,
-  },
-  '3': {
-    backgroundColor: '#f5f5f5',
-    showIcon: false,
-  },
-}
-
-// 按钮配置映射
-const buttonConfigMap: Record<
-  ChannelType,
-  { image: string; textColor: string }
-> = {
-  '1': {
-    image: btn1,
-    textColor: '#000',
-  },
-  '2': {
-    image: btn2,
-    textColor: '#fff',
-  },
-  '3': {
-    image: '',
-    textColor: '#1aff62',
-  },
-}
 
 const props = defineProps({
   modelValue: {
@@ -110,16 +64,11 @@ const props = defineProps({
   },
 })
 
-// 计算属性
-const currentConfig = computed(() => backgroundConfigMap[props.channel])
-const currentButtonConfig = computed(() => buttonConfigMap[props.channel])
+// 获取当前渠道配置
+const currentConfig = computed(() => getThemeConfig(props.channel).input)
 
+// 计算属性
 const showIcon = computed(() => currentConfig.value.showIcon)
-const icon = computed(() => {
-  if (props.channel === '1') return icon1
-  if (props.channel === '2') return icon2
-  return icon1
-})
 
 // 样式计算属性
 const inputClass = computed(() => ({
@@ -133,7 +82,7 @@ const inputStyle = computed(() => {
     backgroundImage: config.backgroundImage
       ? `url(${config.backgroundImage})`
       : 'none',
-    backgroundColor: config.backgroundColor || 'transparent',
+    backgroundColor: config.backgroundColor,
   }
 })
 
@@ -147,17 +96,25 @@ const inputFieldClass = computed(() => ({
   'custom-style': props.channel === '3',
 }))
 
+const inputFieldStyle = computed(() => ({
+  color: currentConfig.value.textColor,
+  '--placeholder-color': currentConfig.value.placeholderColor,
+}))
+
 const copyButtonClass = computed(() => ({
   'copy-button': true,
   'custom-style': props.channel === '3',
 }))
 
 const copyButtonStyle = computed(() => {
-  const config = currentButtonConfig.value
+  const config = currentConfig.value.copyButton
   return props.channel === '3'
-    ? {}
+    ? {
+        backgroundColor: config.backgroundColor,
+        color: config.textColor,
+      }
     : {
-        backgroundImage: `url(${config.image})`,
+        backgroundImage: `url(${config.backgroundImage})`,
         color: config.textColor,
       }
 })
@@ -255,7 +212,7 @@ const handleCopy = async () => {
 }
 
 .input-wrapper.custom-style {
-  border: 1px solid #000;
+  border: 1px solid var(--border-color, #000);
   border-radius: 4px;
   background-color: #f5f5f5;
 }
@@ -266,30 +223,12 @@ const handleCopy = async () => {
   background-color: transparent;
   border: none;
   outline: none;
-  color: #fff;
   font-size: 14px;
   padding: 0;
 }
 
-.input-field.custom-style {
-  color: #000;
-}
-
 .input-field::placeholder {
-  color: var(--secondary-text-color, rgba(255, 255, 255, 0.3));
-}
-
-.input-field.custom-style::placeholder {
-  color: #bfbfbf;
-}
-
-.right-buttons {
-  display: flex;
-  gap: 8px;
-}
-
-.clear-icon {
-  font-size: 16px;
+  color: var(--placeholder-color);
 }
 
 .copy-button {
@@ -299,7 +238,6 @@ const handleCopy = async () => {
   background-repeat: no-repeat;
   border: none;
   background-color: transparent;
-  color: #000;
   font-size: 12px;
   font-weight: 700;
 }
@@ -307,22 +245,12 @@ const handleCopy = async () => {
 .copy-button.custom-style {
   width: 50px;
   height: 28px;
-  background-color: #000;
-  color: #1aff62;
   font-size: 12px;
   font-weight: 500;
   border-radius: 2px;
 }
 
-.action-button {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  background-color: transparent;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  z-index: 1;
+.clear-icon {
+  font-size: 16px;
 }
 </style>

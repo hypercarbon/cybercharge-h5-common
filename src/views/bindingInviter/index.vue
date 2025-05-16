@@ -80,11 +80,10 @@ import {
   getUserInfoById,
   type UserInfoById,
 } from '@/services/bindingInviter'
-import bg1 from './images/1/bg.png'
-import bg2 from './images/2/bg.png'
 import defaultAvatar from './images/default-avatar.png'
 import { useI18n } from 'vue-i18n'
 import type { ChannelType } from './type/channel'
+import { getThemeConfig } from './model/theme'
 
 type ApiError = {
   msg: string
@@ -98,31 +97,9 @@ const userInfoStore = useUserInfoStore()
 const userInfoById = ref<UserInfoById>()
 const findUserLoading = ref(false)
 
-// 背景配置接口
-interface BackgroundConfig {
-  backgroundImage: string
-  backgroundColor: string
-}
-
-// 背景配置映射
-const backgroundConfigMap: Record<ChannelType, BackgroundConfig> = {
-  '1': {
-    backgroundImage: `url(${bg1})`,
-    backgroundColor: 'transparent',
-  },
-  '2': {
-    backgroundImage: `url(${bg2})`,
-    backgroundColor: 'transparent',
-  },
-  '3': {
-    backgroundImage: 'none',
-    backgroundColor: '#fff',
-  },
-}
-
 // 背景样式计算属性
 const backgroundStyle = computed(() => {
-  const config = backgroundConfigMap[channel.value]
+  const config = getThemeConfig(channel.value).pageBackground
   return {
     backgroundImage: config.backgroundImage,
     backgroundColor: config.backgroundColor,
