@@ -2,7 +2,7 @@
   <div
     class="binding-inviter-page"
     :style="{
-      background: backgroundImage,
+      backgroundImage: backgroundImage,
       paddingTop: userInfoStore.safeTop + 'px',
     }"
   >
@@ -29,7 +29,7 @@
           <p class="inviter-name">{{ userInfoById?.username }}</p>
           <!-- <div class="desc">{{ desc }}</div> -->
         </div>
-        <CustomInput
+        <UnifiedInput
           v-model="inputCode"
           :placeholder="t('bindingInviter.Placeholder')"
           :disabled="inviterInfo !== null || !userInfo"
@@ -39,23 +39,15 @@
           @keyup.enter="handleBindInviter"
         />
 
-        <button
+        <UnifiedButton
+          style="margin-top: 24px"
           v-if="!inviterInfo"
-          class="bind-button"
-          :style="{
-            background: bindButtonImage,
-            color: bindBtnTextColorMap[channel],
-          }"
+          :channel="channel"
+          :loading="findUserLoading"
           @click="handleBindInviter"
         >
-          <van-loading
-            v-if="findUserLoading"
-            class="icon-loading"
-            size="20px"
-            :color="bindBtnTextColorMap[channel]"
-          />
           {{ t('bindingInviter.BindNow') }}
-        </button>
+        </UnifiedButton>
       </template>
     </div>
 
@@ -81,8 +73,8 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import CustomNavBar from './components/CustomNavBar.vue'
-// import CustomInput from './components/CustomInput.vue'
-import CustomInput from './components/CustomInputUI.vue'
+import UnifiedInput from './components/UnifiedInput.vue'
+import UnifiedButton from './components/UnifiedButton.vue'
 import ConfirmDialog from './components/ConfirmDialog.vue'
 import { showToast } from 'vant'
 import nativeEvent from '@/utils/nativeEvent'
@@ -99,11 +91,13 @@ import {
 } from '@/services/bindingInviter'
 import bg1 from './images/1/bg.png'
 import bg2 from './images/2/bg.png'
-import btn1 from './images/1/btn_large.png'
-import btn2 from './images/2/btn_large.png'
 import defaultAvatar from './images/default-avatar.png'
 import { useI18n } from 'vue-i18n'
-import type { ApiError } from '@/types/utils'
+import type { ChannelType } from './type/channel'
+
+type ApiError = {
+  msg: string
+}
 
 const { t } = useI18n()
 
@@ -113,32 +107,20 @@ const userInfoStore = useUserInfoStore()
 const userInfoById = ref<UserInfoById>()
 const findUserLoading = ref(false)
 
-const navBarThemeMap = {
+const navBarThemeMap: Record<ChannelType, NavBarTheme> = {
   '1': 'white',
   '2': 'white',
   '3': 'black',
 }
 
-const backgroundImageMap: Record<string, string> = {
+const backgroundImageMap: Record<ChannelType, string> = {
   '1': `url(${bg1})`,
   '2': `url(${bg2})`,
   '3': '#fff',
 }
 
-const btnImageMap: Record<string, string> = {
-  '1': `url(${btn1})`,
-  '2': `url(${btn2})`,
-  '3': '#000',
-}
-
-const bindBtnTextColorMap: Record<string, string> = {
-  '1': '#000',
-  '2': '#fff',
-  '3': '#1AFF62',
-}
-
 // 渠道相关
-const channel = ref('')
+const channel = ref<ChannelType>('1')
 const userInfo = ref<UserInfo>()
 const inviterInfo = ref<InviterInfo>(null)
 // 邀请码相关
@@ -152,7 +134,7 @@ const showConfirmDialog = ref(false)
 // 获取渠道参数
 const getChannelFromUrl = () => {
   // 优先从路由参数获取
-  const routeChannel = route.query.channelId as string
+  const routeChannel = route.query.channelId as ChannelType
   // console.log('routeChannel', routeChannel)
   if (routeChannel) {
     // 如果channelId是数组，取第一个值
@@ -162,7 +144,7 @@ const getChannelFromUrl = () => {
 
   // 从URL参数获取
   const urlParams = new URLSearchParams(window.location.search)
-  const urlChannel = urlParams.get('channelId')
+  const urlChannel = urlParams.get('channelId') as ChannelType
   if (urlChannel) {
     channel.value = urlChannel
   } else {
@@ -221,14 +203,6 @@ const backgroundImage = computed(() => {
     bgImage = backgroundImageMap['1']
   }
   return bgImage
-})
-
-const bindButtonImage = computed(() => {
-  if (channel.value) {
-    return btnImageMap[channel.value]
-  } else {
-    return btnImageMap['1']
-  }
 })
 
 onMounted(async () => {
@@ -381,23 +355,6 @@ const _getDetailsUrl = async () => {
   overflow-wrap: break-word;
 }
 
-.bind-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 48px;
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  border: none;
-  margin-top: 24px;
-  background-color: transparent;
-  color: #000;
-  font-size: 16px;
-  font-weight: 600;
-  border-radius: 4px;
-}
-
 /* 骨架屏样式 */
 .skeleton-container {
   display: flex;
@@ -498,9 +455,5 @@ const _getDetailsUrl = async () => {
   color: #666;
   text-align: center;
   line-height: 1.5;
-}
-
-.icon-loading {
-  margin-right: 8px;
 }
 </style>
