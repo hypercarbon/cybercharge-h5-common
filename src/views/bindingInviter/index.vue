@@ -13,11 +13,11 @@
 
       <!-- 实际内容 -->
       <template v-else>
-        <div class="info-content" v-if="inviterInfo">
-          <img :src="userInfoById?.avatar || defaultAvatar" alt="avatar" />
-          <p class="inviter-name">{{ userInfoById?.username }}</p>
-          <!-- <div class="desc">{{ desc }}</div> -->
-        </div>
+        <UnifiedInfoContent
+          v-if="inviterInfo"
+          :user-info="userInfoById"
+          :channel="channel"
+        />
         <UnifiedInput
           v-model="inputCode"
           :placeholder="t('bindingInviter.Placeholder')"
@@ -65,6 +65,7 @@ import CustomNavBar from './components/CustomNavBar.vue'
 import UnifiedInput from './components/UnifiedInput.vue'
 import UnifiedButton from './components/UnifiedButton.vue'
 import UnifiedSkeleton from './components/UnifiedSkeleton.vue'
+import UnifiedInfoContent from './components/UnifiedInfoContent.vue'
 import ConfirmDialog from './components/ConfirmDialog.vue'
 import { showToast } from 'vant'
 import nativeEvent from '@/utils/nativeEvent'
@@ -304,34 +305,6 @@ const _getDetailsUrl = async () => {
 .binding-inviter-content {
   margin-top: 45px;
   padding: 0 24px;
-}
-
-.info-content {
-  margin-bottom: 40px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-
-  img {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    border: 2px solid #e8e8e840;
-  }
-
-  .inviter-name {
-    margin-top: 12px;
-    font-size: 20px;
-    color: #fff;
-    text-align: center;
-    font-weight: 700;
-    max-width: 100%;
-    word-break: break-all;
-    white-space: normal;
-    overflow-wrap: break-word;
-  }
 }
 
 .desc {
