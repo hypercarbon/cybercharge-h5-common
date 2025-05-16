@@ -1,9 +1,13 @@
 <template>
   <div :class="['customNavBar']">
     <div class="customNavBarBackBtn" @click="handleBack">
-      <BackIcon class="backIcon" />
+      <BackIcon :color="theme === 'black' ? '#000' : '#fff'" class="backIcon" />
     </div>
-    <span class="title">{{ title }}</span>
+    <span
+      class="title"
+      :style="{ color: theme === 'black' ? '#000' : '#fff' }"
+      >{{ title }}</span
+    >
     <div v-if="extra" class="extra-button" @click="handleExtraClick">
       {{ extra }}
     </div>
@@ -16,6 +20,7 @@ import BackIcon from '../Icon/icon_back.vue'
 defineProps<{
   title: string
   extra?: string
+  theme?: 'black' | 'white'
 }>()
 
 const emit = defineEmits<{
@@ -55,7 +60,6 @@ const handleExtraClick = () => {
     }
   }
   .title {
-    color: #fff;
     margin: 0 auto;
   }
   .extra-button {
