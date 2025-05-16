@@ -1,11 +1,5 @@
 <template>
-  <div
-    class="binding-inviter-page"
-    :style="{
-      backgroundImage: backgroundImage,
-      paddingTop: userInfoStore.safeTop + 'px',
-    }"
-  >
+  <div class="binding-inviter-page" :style="backgroundStyle">
     <CustomNavBar
       :channel="channel"
       @back="handleBack"
@@ -103,11 +97,37 @@ const userInfoStore = useUserInfoStore()
 const userInfoById = ref<UserInfoById>()
 const findUserLoading = ref(false)
 
-const backgroundImageMap: Record<ChannelType, string> = {
-  '1': `url(${bg1})`,
-  '2': `url(${bg2})`,
-  '3': '#fff',
+// 背景配置接口
+interface BackgroundConfig {
+  backgroundImage: string
+  backgroundColor: string
 }
+
+// 背景配置映射
+const backgroundConfigMap: Record<ChannelType, BackgroundConfig> = {
+  '1': {
+    backgroundImage: `url(${bg1})`,
+    backgroundColor: 'transparent',
+  },
+  '2': {
+    backgroundImage: `url(${bg2})`,
+    backgroundColor: 'transparent',
+  },
+  '3': {
+    backgroundImage: 'none',
+    backgroundColor: '#fff',
+  },
+}
+
+// 背景样式计算属性
+const backgroundStyle = computed(() => {
+  const config = backgroundConfigMap[channel.value]
+  return {
+    backgroundImage: config.backgroundImage,
+    backgroundColor: config.backgroundColor,
+    paddingTop: userInfoStore.safeTop + 'px',
+  }
+})
 
 // 渠道相关
 const channel = ref<ChannelType>('1')
@@ -175,17 +195,6 @@ const handleBindInviter = async () => {
 const handleConfirm = async () => {
   await _bindChannelInviter()
 }
-
-// 背景图片计算属性
-const backgroundImage = computed(() => {
-  let bgImage = ''
-  if (channel.value) {
-    bgImage = backgroundImageMap[channel.value]
-  } else {
-    bgImage = backgroundImageMap['1']
-  }
-  return bgImage
-})
 
 onMounted(async () => {
   try {
