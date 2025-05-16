@@ -7,7 +7,7 @@
     }"
   >
     <CustomNavBar
-      :theme="navBarTheme"
+      :channel="channel"
       @back="handleBack"
       :title="t('bindingInviter.MyInviter')"
       :extra="t('bindingInviter.Details')"
@@ -15,12 +15,7 @@
     />
     <div class="binding-inviter-content">
       <!-- 骨架屏 -->
-      <div v-if="loading" class="skeleton-container">
-        <div class="skeleton-avatar"></div>
-        <div class="skeleton-desc"></div>
-        <div class="skeleton-input"></div>
-        <div class="skeleton-button"></div>
-      </div>
+      <UnifiedSkeleton v-if="loading" :channel="channel" />
 
       <!-- 实际内容 -->
       <template v-else>
@@ -75,6 +70,7 @@ import { useRoute } from 'vue-router'
 import CustomNavBar from './components/CustomNavBar.vue'
 import UnifiedInput from './components/UnifiedInput.vue'
 import UnifiedButton from './components/UnifiedButton.vue'
+import UnifiedSkeleton from './components/UnifiedSkeleton.vue'
 import ConfirmDialog from './components/ConfirmDialog.vue'
 import { showToast } from 'vant'
 import nativeEvent from '@/utils/nativeEvent'
@@ -106,12 +102,6 @@ const userInfoStore = useUserInfoStore()
 // const desc = ref(t('bindingInviter.Welcome'))
 const userInfoById = ref<UserInfoById>()
 const findUserLoading = ref(false)
-
-const navBarThemeMap: Record<ChannelType, NavBarTheme> = {
-  '1': 'white',
-  '2': 'white',
-  '3': 'black',
-}
 
 const backgroundImageMap: Record<ChannelType, string> = {
   '1': `url(${bg1})`,
@@ -185,14 +175,6 @@ const handleBindInviter = async () => {
 const handleConfirm = async () => {
   await _bindChannelInviter()
 }
-
-const navBarTheme = computed(() => {
-  if (channel.value) {
-    return navBarThemeMap[channel.value]
-  } else {
-    return navBarThemeMap['1']
-  }
-})
 
 // 背景图片计算属性
 const backgroundImage = computed(() => {
@@ -353,80 +335,6 @@ const _getDetailsUrl = async () => {
   word-break: break-all;
   white-space: normal;
   overflow-wrap: break-word;
-}
-
-/* 骨架屏样式 */
-.skeleton-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 24px;
-  padding: 0 24px;
-}
-
-.skeleton-avatar {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.1) 25%,
-    rgba(255, 255, 255, 0.2) 50%,
-    rgba(255, 255, 255, 0.1) 75%
-  );
-  background-size: 200% 100%;
-  animation: skeleton-loading 1.5s infinite;
-}
-
-.skeleton-desc {
-  width: 200px;
-  height: 18px;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.1) 25%,
-    rgba(255, 255, 255, 0.2) 50%,
-    rgba(255, 255, 255, 0.1) 75%
-  );
-  background-size: 200% 100%;
-  animation: skeleton-loading 1.5s infinite;
-  border-radius: 4px;
-}
-
-.skeleton-input {
-  width: 100%;
-  height: 48px;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.1) 25%,
-    rgba(255, 255, 255, 0.2) 50%,
-    rgba(255, 255, 255, 0.1) 75%
-  );
-  background-size: 200% 100%;
-  animation: skeleton-loading 1.5s infinite;
-  border-radius: 8px;
-}
-
-.skeleton-button {
-  width: 100%;
-  height: 48px;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.1) 25%,
-    rgba(255, 255, 255, 0.2) 50%,
-    rgba(255, 255, 255, 0.1) 75%
-  );
-  background-size: 200% 100%;
-  animation: skeleton-loading 1.5s infinite;
-  border-radius: 8px;
-}
-
-@keyframes skeleton-loading {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
 }
 
 .dialog-content {
