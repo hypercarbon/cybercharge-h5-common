@@ -1,6 +1,6 @@
 <template>
   <div class="binding-inviter-page" :style="backgroundStyle">
-    <CustomNavBar
+    <UnifiedNavBar
       :channel="channel"
       @back="handleBack"
       :title="t('bindingInviter.MyInviter')"
@@ -61,7 +61,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import CustomNavBar from './components/CustomNavBar.vue'
+import UnifiedNavBar from './components/UnifiedNavBar.vue'
 import UnifiedInput from './components/UnifiedInput.vue'
 import UnifiedButton from './components/UnifiedButton.vue'
 import UnifiedSkeleton from './components/UnifiedSkeleton.vue'
